@@ -16,7 +16,7 @@ Une opération de transplantation se fait en plusieurs phases:
 ## Dataset
 
 - Séries temporelles extraites des instruments de mesure du bloc opératoire.
-- Marqueurs temporels collectés manuellement lors de la transplantation. 
+- Marqueurs temporels collectés manuellement lors de la transplantation.
 
 ## Dictionnaire des variables:
 
@@ -56,3 +56,7 @@ Une opération de transplantation se fait en plusieurs phases:
 - SvO2 (m)
 - Temp
 - VT
+
+## Foire aux Questions
+
+Nous maintenons une foire aux questions au sein de [ce document partagé](https://docs.google.com/document/d/1d_Tbq-IAW-30KVEQZv_IKozlDDtzy6QnfETXtgBTucw/edit).
