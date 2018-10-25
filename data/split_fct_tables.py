@@ -29,7 +29,7 @@ temperature = ['id_patient', 'time', 'temp']
 map_fields = {
     'neurology': neurology,
     'haemodynamic': haemodynamic,
-    'respiratory': haemodynamic,
+    'respiratory': respiratory,
     'temperature': temperature
     }
 
