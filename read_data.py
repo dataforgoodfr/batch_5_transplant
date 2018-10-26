@@ -65,7 +65,10 @@ def read_xls_files(path_xls):
 		except Exception as e:
 			print('Error during reading files '+str(path_xls)+' for id_patient : ' + str(id_patient))
 			print(e)
-        
+    
+
+	# Cast id_patient to int
+	data['id_patient'] = data['id_patient'].astype(int)
 	data.fillna(0, inplace=True) 
 
 	return data
