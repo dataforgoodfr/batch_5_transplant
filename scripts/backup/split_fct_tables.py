@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Read clean_bloc_files csv
-data = pd.read_csv('clean_bloc_files.csv')
+data = pd.read_csv('../data/clean_data/clean_bloc_files.csv')
 
 data.columns = map(str.lower, data.columns)
 data.columns = data.columns.str.replace(' ', '_')
@@ -33,7 +33,7 @@ map_fields = {
     'temperature': temperature
     }
 
-for name, array in map_fields.iteritems():
+for name, array in map_fields.items():
     df = data[data.columns.intersection(array)]
-    filename = 'fct_{}.csv'.format(name)
+    filename = '../data/clean_data/model/fct_{}.csv'.format(name)
     df.to_csv(filename)
