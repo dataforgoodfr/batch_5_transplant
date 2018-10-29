@@ -1,4 +1,15 @@
-## Dataset
+## Datasets
+
+## Fichier consolidé
+
+
+Les scripts de cleaning vont récupérer les fichier excel dans le dossier `./original_data/machines` pour créer un fichier `clean_bloc_file.csv`avec les données consolidés de tous les fichiers Excel.
+Ce fichier est ensuite utilisé pour créer les tables de faits.
+
+Les tables de dimension ont été créé __à la main__ à partir du fichier suivant : `./original_data/patient-donor/BDD primaire bloc opératoire.xlsx`
+
+
+## Modèle de données
 
 Le dataset contient les données relatives à 412 transplantations pulmonaires ayant été réalisées par les équipes de l'hôpital Foch depuis Janvier 2012.
 

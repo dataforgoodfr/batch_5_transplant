@@ -19,3 +19,49 @@ Une opération de transplantation se fait en plusieurs phases:
 ## Foire aux Questions
 
 Nous maintenons une foire aux questions au sein de [ce document partagé](https://docs.google.com/document/d/1d_Tbq-IAW-30KVEQZv_IKozlDDtzy6QnfETXtgBTucw/edit).
+
+## Arborescence 
+
+Vous retrouverez plusieurs dossiers dans ce git:
+
+- `data` : c'est dans ce dossier pour vous aller retrouver tous les datasets clean
+- `documentation`: dossier contenant tous les fichiers de documentation
+- `scripts` : dossier contenant les scripts de cleaning et création des tables de dimensions et faits.
+- `etudes` : pour chaque étude effectuée merci de mettre vos notebooks dans ce sossier.
+
+## Environnement technique de travail 
+
+- Télécharger anaconda / miniconda selon votre OS [lien](https://www.anaconda.com/download/#macos) version 3.x.
+
+- Mettre en place votre environnement conda
+
+```bash
+bash set_env.sh
+source activate transplant
+```
+
+Si jamais vous souhaitez créer votre propre environnement
+
+```bash
+conda create -n transplant python=3.5
+conda install pandas
+conda install scikit-learn
+conda install nb_conda
+conda install xlrd
+```
+
+Pour faire l'export de votre environnement :
+
+```bash
+conda env export | grep -v "^prefix: " > environment_OS.yml
+```
+
+Pour activer votre environnement conda:
+```bash
+source activate transplant
+```
+
+
+
+
+

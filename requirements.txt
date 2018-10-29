@@ -1,0 +1,5 @@
+pandas
+scikit-learn
+nb_conda
+xlrd
+tqdm
