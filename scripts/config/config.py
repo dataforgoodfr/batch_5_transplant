@@ -9,9 +9,8 @@ import inspect, sys
 
 
 ROOT_DIR = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0])))
-print(ROOT_DIR)
 
-SCRIPT_ROOT_DIR = print(os.path.realpath(os.path.dirname(__file__)))
+SCRIPT_ROOT_DIR = os.path.realpath(os.path.dirname(__file__))
 
 """
 # Directory
