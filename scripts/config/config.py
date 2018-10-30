@@ -10,12 +10,13 @@ import inspect, sys
 
 ROOT_DIR = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0])))
 
+SCRIPT_ROOT_DIR = os.path.realpath(os.path.dirname(__file__))
+
 """
 # Directory
 DATA_DIR= "%s/data/"%ROOT_DIR
 DATA_ORIGINAL = "%s/original_data/"%DATA_DIR
 DATA_CLEAN = "%s/clean_data/"%DATA_DIR
-
 """
 
 # Path for scripts
