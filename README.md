@@ -44,6 +44,6 @@ Image 3 - outils de monitoring continu pendant la chirurgie.
 
 ![monitoring](images/monitoring.png)
 
-Image 4 - atient extubé en salle d’opération écrivant un message
+Image 4 - patient extubé en salle d’opération écrivant un message
 
-![extubation](images/monitoring.png)
+![extubation](images/extubation.png)
