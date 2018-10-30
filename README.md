@@ -24,8 +24,8 @@ Nous maintenons une foire aux questions au sein de [ce document partagé](https:
 
 Vous retrouverez plusieurs dossiers dans ce git:
 
-- `data` : c'est dans ce dossier pour vous aller retrouver tous les datasets clean
-- `documentation`: dossier contenant tous les fichiers de documentation
+- `data` : vous retrouverez dans ce dossier l'ensembles des datasets.
+- `documentation`: dossier contenant tous les fichiers de documentation.
 - `scripts` : dossier contenant les scripts de cleaning et création des tables de dimensions et faits.
 - `etudes` : pour chaque étude effectuée merci de mettre vos notebooks dans ce dossier.
 
