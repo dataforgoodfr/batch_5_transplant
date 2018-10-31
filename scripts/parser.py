@@ -35,7 +35,7 @@ class Parser:
         data = self.import_clean_file(filename)
         for name, array in self.map_fields.items():
             df = data[data.columns.intersection(array)]
-            filename = '../data/clean_data/model/fct_{}.csv'.format(name)
+            filename = os.path.join(self.data_model_path, 'fct_{}.csv'.format(name))
             df.to_csv(filename)
 
 
