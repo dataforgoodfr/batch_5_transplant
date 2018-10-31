@@ -19,6 +19,7 @@ dependencies:
   - clyent=1.2.2=py35_1
   - constantly=15.1.0=py35h28b3542_0
   - cryptography=2.3.1=py35hdbc3d79_0
+  - cython=0.28.5=py35h0a44026_0
   - dbus=1.13.2=h760590f_1
   - decorator=4.3.0=py35_0
   - entrypoints=0.2.3=py35_2
