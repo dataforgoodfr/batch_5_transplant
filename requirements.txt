@@ -3,3 +3,5 @@ scikit-learn
 nb_conda
 xlrd
 tqdm
+pip
+jupyter

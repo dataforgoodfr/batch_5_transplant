@@ -1,13 +1,16 @@
 #!/usr/bin/python
 import pandas as pd
-from config.config import *
+from scripts.config import *
 import glob
+from tqdm import tqdm
+import time
 
 class Parser:
 
     def __init__(self):
         self.map_fields = MODEL_TABLE_FIELDS
-        self.data_clean_dir = DATA_CLEAN
+        self.data_clean_path = DATA_CLEAN
+        self.data_model_path = DATA_MODEL
 
     def import_clean_file(self, filename):
         try:
@@ -26,7 +29,7 @@ class Parser:
             return file
         except Exception as e:
             print("Error importing your clean file :\nAn exception of type {0} occurred. \nArguments:{1!r}".format(type(e).__name__, e))
-            print("\nIs the file exists in {} ?".format(self.data_clean_dir))
+            print("\nIs the file exists in {} ?".format(DATA_CLEAN))
 
     def split_fact_tables(self, filename):
         data = self.import_clean_file(filename)
@@ -37,7 +40,7 @@ class Parser:
 
 
     def upload_xls_files(self):
-        return glob.glob('{}/*.xls'.format(DATA_ORIGINAL_MACHINES))
+        return glob.glob('{}*.xls'.format(DATA_ORIGINAL_MACHINES))
 
     def read_xls_files(self, path_xls):
         """
@@ -123,3 +126,44 @@ class Parser:
             data[unknow_col] = 0
 
         return data
+
+    def update_tables(self):
+        # Uploading Excel files
+        files = self.upload_xls_files()
+        print("Found {} files ... ".format(len(files)))
+        print(files)
+
+        print('Importing and cleaning Excel files ...')
+        time.sleep(0.5)
+
+        clean_filename = '{}clean_bloc_file.csv'.format(DATA_CLEAN)
+        df_clean_output = pd.concat([self.read_xls_files(file) for file in tqdm(files)])
+
+        print('Exporting clean file in  {}...'.format(DATA_CLEAN))
+        df_clean_output.to_csv(clean_filename)
+
+        print('Creating the data model in {}...'.format(DATA_MODEL))
+        # Create data model
+        self.split_fact_tables(clean_filename)
+
+
+    def list_datamodel_datasets(self):
+
+        output = []
+        try:
+            datasets = glob.glob('{}*.csv'.format(DATA_MODEL))
+
+            for dataset in datasets:
+                info = {
+                    'file_name': dataset.split('/')[-1],
+                    'file_path': dataset
+                }
+                output.append(info)
+        except Exception as e:
+            print("Error exporting your data model dataset :\nAn exception of type {0} occurred. \nArguments:{1!r}".format(type(e).__name__, e))
+            print("\nIs the file exists in {} ?".format(DATA_MODEL))
+            print("\n try to update your tables using the parser.update_tables() method")
+        return output
+
+
+

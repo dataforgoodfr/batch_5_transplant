@@ -8,9 +8,12 @@ import inspect, sys
 ##############################
 
 
-ROOT_DIR = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0])))
+# ROOT_DIR = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0])))
 
-SCRIPT_ROOT_DIR = os.path.realpath(os.path.dirname(__file__))
+REPO_NAME = 'batch_5_transplant'
+
+ROOT_DIR = os.path.dirname(os.getcwd())
+ROOT_DIR = ROOT_DIR.replace(ROOT_DIR.split('{}'.format(REPO_NAME))[-1], '')
 
 """
 # Directory
@@ -20,12 +23,10 @@ DATA_CLEAN = "%s/clean_data/"%DATA_DIR
 """
 
 # Path for scripts
-DATA_ORIGINAL_MACHINES = "../data/original_data/machines/"
-DATA_ORIGINAL_PATIENT = "../data/original_data/patient-donor/"
-DATA_MODEL = "../data/clean_data/model/"
-DATA_CLEAN = "../data/clean_data/"
-
-
+DATA_ORIGINAL_MACHINES = os.path.join(ROOT_DIR, 'data/original_data/machines/')
+DATA_ORIGINAL_PATIENT = os.path.join(ROOT_DIR, 'data/original_data/patient-donor/')
+DATA_CLEAN = os.path.join(ROOT_DIR, 'data/clean_data/')
+DATA_MODEL = os.path.join(ROOT_DIR, 'data/clean_data/model/')
 
 ##############################
 ####	  VARIABLES
