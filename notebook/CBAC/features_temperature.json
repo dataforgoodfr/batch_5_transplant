@@ -1,0 +1,10 @@
+{
+    
+"temp" : {
+    
+    "name" : "temp_cat",
+    "etendue" : [0, 50], 
+    "normalite": [34, 37]
+      
+}
+}
