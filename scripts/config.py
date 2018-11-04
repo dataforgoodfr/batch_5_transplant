@@ -13,6 +13,9 @@ REPO_NAME = 'batch_5_transplant'
 ROOT_DIR = os.path.dirname(os.getcwd())
 ROOT_DIR = ROOT_DIR.replace(ROOT_DIR.split('{}'.format(REPO_NAME))[-1], '')
 
+if not ROOT_DIR:
+	ROOT_DIR = os.path.dirname(os.getcwd())
+
 """
 # Directory
 DATA_DIR= "%s/data/"%ROOT_DIR
