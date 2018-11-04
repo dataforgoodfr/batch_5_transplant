@@ -9,6 +9,10 @@ import inspect, sys
 
 ROOT_DIR = os.path.join(os.path.dirname(os.path.abspath(os.path.realpath(__file__))), '..')
 
+REPO_NAME = 'batch_5_transplant'
+ROOT_DIR = os.path.dirname(os.getcwd())
+ROOT_DIR = ROOT_DIR.replace(ROOT_DIR.split('{}'.format(REPO_NAME))[-1], '')
+
 """
 # Directory
 DATA_DIR= "%s/data/"%ROOT_DIR

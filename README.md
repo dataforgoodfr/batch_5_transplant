@@ -36,7 +36,7 @@ Vous retrouverez plusieurs dossiers dans ce git:
 - Mettre en place votre environnement conda
 
 ```bash
-bash set_env.sh
+source set_env.sh
 source activate transplant
 ```
 
