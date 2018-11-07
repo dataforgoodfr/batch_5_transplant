@@ -42,6 +42,9 @@ class Parser:
     def upload_xls_files(self):
         return glob.glob('{}*.xls'.format(DATA_ORIGINAL_MACHINES))
 
+    def list_files(self, path_to_files, filename_pattern):
+        return glob.glob('{}{}'.format(path_to_files, filename_pattern))
+
     def read_xls_files(self, path_xls):
         """
         Read xls file in a pandas DataFrame.
@@ -127,12 +130,46 @@ class Parser:
 
         return data
 
-    def update_tables(self):
-        # Uploading Excel files
-        files = self.upload_xls_files()
-        print("Found {} files ... ".format(len(files)))
-        print(files)
+    def split_dim_tables(self, path_to_file):
+        try:
+            output = {}
+            print("Uploading sheets of the Excel file ...")
 
+            for sheet in tqdm(pd.ExcelFile(path_to_file).sheet_names):
+                if sheet not in ['ensemble', 'glossaire']:
+                    df = pd.read_excel(path_to_file, sheet, index_col=None)
+                    if sheet != 'donneur':
+                        sheet = '{}_{}'.format('patient', sheet)
+                    info = {
+                        sheet: list(df.columns.values)
+                    }
+                    output.update(info)
+            DIM_MAP_FIELDS = output
+
+            for name, array in DIM_MAP_FIELDS.items():
+                df_ = df[df.columns.intersection(array)]
+                filename = os.path.join(DATA_MODEL, 'dim_{}.csv'.format(name))
+                df.to_csv(filename)
+
+        except Exception as e:
+            print("Error when splitting dim files :\nAn exception of type {0} occurred. \nArguments:{1!r}".format(type(e).__name__, e))
+
+        return
+
+
+    def update_tables(self):
+
+        # Uploading Excel files for patient donor
+        files = self.list_files(DATA_ORIGINAL_PATIENT, FILE_NAME_PATTERN['patient-donor'])
+        print("Found {} files ... ".format(len(files)))
+        print('Importing and cleaning Excel files ...')
+        time.sleep(0.5)
+
+        self.split_dim_tables(files[0])
+
+        # Uploading Excel files for machines
+        files = self.list_files(DATA_ORIGINAL_MACHINES, FILE_NAME_PATTERN['machines'])
+        print("Found {} files ... ".format(len(files)))
         print('Importing and cleaning Excel files ...')
         time.sleep(0.5)
 
@@ -145,25 +182,6 @@ class Parser:
         print('Creating the data model in {}...'.format(DATA_MODEL))
         # Create data model
         self.split_fact_tables(clean_filename)
-
-
-    def list_datamodel_datasets(self):
-
-        output = []
-        try:
-            datasets = glob.glob('{}*.csv'.format(DATA_MODEL))
-
-            for dataset in datasets:
-                info = {
-                    'file_name': dataset.split('/')[-1],
-                    'file_path': dataset
-                }
-                output.append(info)
-        except Exception as e:
-            print("Error exporting your data model dataset :\nAn exception of type {0} occurred. \nArguments:{1!r}".format(type(e).__name__, e))
-            print("\nIs the file exists in {} ?".format(DATA_MODEL))
-            print("\n try to update your tables using the parser.update_tables() method")
-        return output
 
 
 

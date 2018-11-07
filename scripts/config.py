@@ -33,8 +33,9 @@ DATA_MODEL = os.path.join(ROOT_DIR, 'data/clean_data/model/')
 ####	  VARIABLES
 ##############################
 
-FILE_NAME_HEADER = {
-	'machines': 'BLOC'
+FILE_NAME_PATTERN = {
+	'machines': 'Bloc*.xls',
+	'patient-donor': 'base*.xlsx'
 }
 
 
