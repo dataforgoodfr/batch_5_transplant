@@ -1,0 +1,13 @@
+---
+title: "Analyse exploratoire des données de Transplant"
+output: html_notebook
+---
+
+Dans ce notebook on explore les données 
+
+```{r}
+library(Rbnb)
+```
+
+
+
