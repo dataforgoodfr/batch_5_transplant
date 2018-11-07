@@ -25,6 +25,7 @@ Cette table contient une ligne pour chacun des 412 patient du set. On peut joind
 
 [A finir de compléter]
 
+
 ### dim_donor
 
 Cette table contient une ligne par donneur de poumon. Il y a une relation 1:1 avec la table patient.
