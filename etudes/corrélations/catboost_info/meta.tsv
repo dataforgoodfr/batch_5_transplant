@@ -1,9 +1,0 @@
-name	experiment
-iterCount	40
-learnErrorLog	learn_error.tsv
-testErrorLog	test_error.tsv
-timeLeft	time_left.tsv
-loss	Logloss	min
-loss	Accuracy	max
-loss	BalancedAccuracy	max
-loss	AUC	max
