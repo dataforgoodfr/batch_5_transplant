@@ -1,0 +1,24 @@
+{
+    
+"bis" : {
+    
+    "name" : "bis_cat",
+    "etendue" : [0, 100], 
+    "normalite": [40, 60]
+      
+}, 
+"nmt_tof" : {
+    
+    "name" : "nmt_tof_cat",
+    "etendue" : [0, 4], 
+    "normalite": [0, 1]
+      
+}, 
+"nmtratio" : {
+    
+    "name" : "nmtratio_cat",
+    "etendue" : [0, 100], 
+    "normalite": [0, 100]
+      
+}
+}

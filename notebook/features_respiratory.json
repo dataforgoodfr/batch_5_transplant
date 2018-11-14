@@ -1,0 +1,91 @@
+{
+    
+"etco2" : {
+    
+    "name" : "etco2_cat",
+    "etendue" : [0, 100], 
+    "normalite": [3, 5.5]
+      
+}, 
+    
+"eto2" : {
+    
+    "name" : "eto2_cat",
+    "etendue" : [21, 100], 
+    "normalite": [35, 60]
+      
+}, 
+"fico2" : {
+    
+    "name" : "fico2_cat",
+    "etendue" : [0, 5], 
+    "normalite": [1, 3]
+      
+}, 
+"fr" : {
+    
+    "name" : "fr_cat",
+    "etendue" : [0, 60], 
+    "normalite": [12, 24]
+      
+}, 
+    
+"fr_ecg" : {
+    
+    "name" : "fr_ecg_cat",
+    "etendue" : [0, 60], 
+    "normalite": [12, 24]
+      
+}, 
+
+"mac" : {
+    
+    "name" : "mac_cat",
+    "etendue" : [0, 3], 
+    "normalite": [1, 2]
+      
+},
+"peeptotal" : {
+    
+    "name" : "peeptotal_cat",
+    "etendue" : [0, 20], 
+    "normalite": [4, 8]
+      
+},  
+    
+"pmax" : {
+    
+    "name" : "pmax_cat",
+    "etendue" : [0, 65], 
+    "normalite": [25, 40]
+      
+},
+"pplat" : {
+    
+    "name" : "pmax_cat",
+    "etendue" : [0, 40], 
+    "normalite": [8, 25]
+      
+}, 
+"rr_co2" : {
+    
+    "name" : "rr_co2_cat",
+    "etendue" : [0, 60], 
+    "normalite": [12, 24]
+      
+}, 
+"spo2" : {
+    
+    "name" : "spo2_cat",
+    "etendue" : [0, 100], 
+    "normalite": [92, 100]
+      
+}, 
+"svo2__m" : {
+    
+    "name" : "svo2__m_cat",
+    "etendue" : [0, 100], 
+    "normalite": [75, 88]
+      
+}
+}
