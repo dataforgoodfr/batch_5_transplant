@@ -52,7 +52,7 @@
     
     "name" : "pasm_cat",
     "etendue" : [0, 65], 
-    "normalite": [20, 35]
+    "normalite": [60, 100]
       
 },
 
