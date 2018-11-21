@@ -54,7 +54,7 @@ dependencies:
   - libsodium=1.0.16=h3efe00b_0
   - markupsafe=1.0=py35h1de35cc_1
   - mistune=0.8.3=py35h1de35cc_1
-  - mkl=2019.0=118
+  - mkl=2018.0.3=1
   - mkl_fft=1.0.6=py35hb8a8100_0
   - mkl_random=1.0.1=py35h5d10147_1
   - nb_anacondacloud=1.4.0=py35_0

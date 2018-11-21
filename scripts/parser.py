@@ -140,16 +140,14 @@ class Parser:
                     df = pd.read_excel(path_to_file, sheet, index_col=None)
                     if sheet != 'donneur':
                         sheet = '{}_{}'.format('patient', sheet)
+
+                    filename = os.path.join(DATA_MODEL, 'dim_{}.csv'.format(sheet))
+                    df.to_csv(filename)
+
                     info = {
                         sheet: list(df.columns.values)
                     }
                     output.update(info)
-            DIM_MAP_FIELDS = output
-
-            for name, array in DIM_MAP_FIELDS.items():
-                df_ = df[df.columns.intersection(array)]
-                filename = os.path.join(DATA_MODEL, 'dim_{}.csv'.format(name))
-                df.to_csv(filename)
 
         except Exception as e:
             print("Error when splitting dim files :\nAn exception of type {0} occurred. \nArguments:{1!r}".format(type(e).__name__, e))
