@@ -61,6 +61,7 @@ docs/_build/
 target/
 # Jupyter Notebook
 .ipynb_checkpoints
+
 # pyenv
 .python-version
 # celery beat schedule file
@@ -84,3 +85,4 @@ venv.bak/
 /site
 # mypy
 .mypy_cache/
+.DS_store
