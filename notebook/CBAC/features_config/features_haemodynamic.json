@@ -1,0 +1,91 @@
+{
+    
+"dc" : {
+    
+    "name" : "dc_cat",
+    "etendue" : [0, 10], 
+    "normalite": [2, 5]
+      
+}, 
+    
+"fc" : {
+    
+    "name" : "fc_cat",
+    "etendue" : [0, 220], 
+    "normalite": [50, 90]
+      
+},
+    
+"papdia" : {
+    
+    "name" : "papdia_cat",
+    "etendue" : [0, 65], 
+    "normalite": [14, 35]
+      
+}, 
+    
+    
+"papmoy" : {
+    
+    "name" : "papmoy_cat",
+    "etendue" : [0, 65], 
+    "normalite": [20, 35]
+      
+},
+"papsys" : {
+    
+    "name" : "papsys_cat",
+    "etendue" : [0, 120], 
+    "normalite": [25, 40]
+      
+},
+
+"pasd" : {
+    
+    "name" : "pasd_cat",
+    "etendue" : [0, 65], 
+    "normalite": [14, 35]
+      
+},
+    
+"pasm" : {
+    
+    "name" : "pasm_cat",
+    "etendue" : [0, 65], 
+    "normalite": [20, 35]
+      
+},
+
+    "pass" : {
+    
+    "name" : "pass_cat",
+    "etendue" : [0, 320], 
+    "normalite": [80, 140]
+      
+},
+
+"pnid" : {
+    
+    "name" : "pnid_cat",
+    "etendue" : [0, 65], 
+    "normalite": [14, 35]
+      
+},
+
+"pnim" : {
+    
+    "name" : "pnim_cat",
+    "etendue" : [0, 65], 
+    "normalite": [20, 35]
+      
+},
+
+"pnis" : {
+    
+    "name" : "pnis_cat",
+    "etendue" : [0, 320], 
+    "normalite": [80, 140]
+      
+}
+
+}

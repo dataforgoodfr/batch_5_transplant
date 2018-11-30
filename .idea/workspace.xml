@@ -2,18 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3a7d3083-1afa-4b3d-b4f0-3569f1e27c8a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/data/clean_data/clean_bloc_file.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/clean_data/clean_bloc_file.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/clean_data/model/dim_donneur.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/clean_data/model/dim_donneur.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/clean_data/model/dim_patient_intraoperatoire.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/clean_data/model/dim_patient_intraoperatoire.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/clean_data/model/dim_patient_preoperatoire.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/clean_data/model/dim_patient_preoperatoire.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/clean_data/model/fct_haemodynamic.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/clean_data/model/fct_haemodynamic.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/clean_data/model/fct_neurology.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/clean_data/model/fct_neurology.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/clean_data/model/fct_respiratory.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/clean_data/model/fct_respiratory.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/clean_data/model/fct_temperature.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/clean_data/model/fct_temperature.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/environment_linux.yml" beforeDir="false" afterPath="$PROJECT_DIR$/environment_linux.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/etudes/Exemple - Import Dataset.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/etudes/Exemple - Import Dataset.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/etudes/engineering/notebook/IY - Engineering - Création automatique des tables de dimensions.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/etudes/engineering/notebook/IY - Engineering - Création automatique des tables de dimensions.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/parser.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/data/README.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,22 +22,28 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="csv" value="4" />
+          <entry key="gitignore" value="1" />
+          <entry key="md" value="1" />
           <entry key="py" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="CSV" value="4" />
+          <entry key="Markdown" value="1" />
+          <entry key="PLAIN_TEXT" value="1" />
           <entry key="Python" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
+          <entry key="md" value="104" />
           <entry key="py" value="14" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
+          <entry key="Markdown" value="104" />
           <entry key="Python" value="14" />
         </counts>
       </usages-collector>
@@ -55,11 +51,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="169">
+                <caret line="372" column="56" selection-start-line="372" selection-start-column="56" selection-end-line="372" selection-end-column="56" />
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/scripts/parser.py">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="185" lean-forward="true" selection-start-line="185" selection-end-line="185" />
+            <state relative-caret-position="502">
+              <caret line="85" column="12" selection-start-line="85" selection-start-column="12" selection-end-line="85" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -73,6 +81,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/scripts/parser.py" />
+        <option value="$PROJECT_DIR$/data/README.md" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -101,44 +111,17 @@
             <path>
               <item name="batch_5_transplant" type="b2602c69:ProjectViewProjectNode" />
               <item name="batch_5_transplant" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-              <item name="clean_data" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="batch_5_transplant" type="b2602c69:ProjectViewProjectNode" />
-              <item name="batch_5_transplant" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-              <item name="clean_data" type="462c0819:PsiDirectoryNode" />
-              <item name="model" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="batch_5_transplant" type="b2602c69:ProjectViewProjectNode" />
-              <item name="batch_5_transplant" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-              <item name="original_data" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="batch_5_transplant" type="b2602c69:ProjectViewProjectNode" />
-              <item name="batch_5_transplant" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-              <item name="original_data" type="462c0819:PsiDirectoryNode" />
-              <item name="machines" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="batch_5_transplant" type="b2602c69:ProjectViewProjectNode" />
-              <item name="batch_5_transplant" type="462c0819:PsiDirectoryNode" />
               <item name="etudes" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="batch_5_transplant" type="b2602c69:ProjectViewProjectNode" />
               <item name="batch_5_transplant" type="462c0819:PsiDirectoryNode" />
-              <item name="etudes" type="462c0819:PsiDirectoryNode" />
-              <item name="clustering" type="462c0819:PsiDirectoryNode" />
+              <item name="images" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="batch_5_transplant" type="b2602c69:ProjectViewProjectNode" />
               <item name="batch_5_transplant" type="462c0819:PsiDirectoryNode" />
-              <item name="scripts" type="462c0819:PsiDirectoryNode" />
+              <item name="notebook" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -179,12 +162,12 @@
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24947146" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.09795631" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Version Control" show_stripe_button="false" />
       <window_info anchor="bottom" id="Python Console" />
-      <window_info anchor="bottom" id="Terminal" sideWeight="0.49964765" visible="true" weight="0.32891566" />
-      <window_info anchor="bottom" id="Event Log" sideWeight="0.5003524" side_tool="true" weight="0.32891566" />
+      <window_info active="true" anchor="bottom" id="Terminal" sideWeight="0.4989429" visible="true" weight="0.32891566" />
+      <window_info anchor="bottom" id="Event Log" sideWeight="0.5010571" side_tool="true" weight="0.32891566" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -219,6 +202,23 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
           <caret line="185" lean-forward="true" selection-start-line="185" selection-end-line="185" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="169">
+            <caret line="372" column="56" selection-start-line="372" selection-start-column="56" selection-end-line="372" selection-end-column="56" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="502">
+          <caret line="85" column="12" selection-start-line="85" selection-start-column="12" selection-end-line="85" selection-end-column="12" />
         </state>
       </provider>
     </entry>
