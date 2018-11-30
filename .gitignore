@@ -86,3 +86,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 .DS_store
+.idea/
