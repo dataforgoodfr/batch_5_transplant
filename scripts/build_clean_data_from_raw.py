@@ -1,8 +1,7 @@
 import os
 import glob
 import pandas as pd
-from config import PATH_DYNAMIC_RAW, PATH_DYNAMIC_CLEAN,\
-    PATH_STATIC_RAW, PATH_STATIC_CLEAN
+from transplant.config import PATH_DYNAMIC_RAW, PATH_DYNAMIC_CLEAN, PATH_STATIC_RAW, PATH_STATIC_CLEAN
 
 
 # Dynamic variables methods
