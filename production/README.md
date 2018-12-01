@@ -23,3 +23,23 @@ _`Evaluation`_
 
   - `get_test_data`: retourne un `DataFrame` composé de l'ensemble des données statiques et dynamiques à 30 minutes avant la sortie du bloc.
   - `evaluate_prediction(y)`: affiche des indicateurs de performance du modèle. `y` correspond à un `DataFrame` composé des variables `id_patient` et `prediction`.
+
+## Example
+
+Afin d'utiliser ces fonctions, il vous suffit d'instancier les classes, puis d'appeler votre fonction:
+
+```python
+
+from dataset import Dataset
+
+#initialize class Dataset
+dataset = Dataset()
+
+dataset.train = True
+dataset.test = False
+dataset.time_offset = 30
+
+#call a function of interest
+training_set = dataset.get_merge_data()
+
+```
