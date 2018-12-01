@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import warnings
-from transplant.config import PATH_DYNAMIC_CLEAN
+from transplant.config import PATH_STATIC_CLEAN
 
 warnings.filterwarnings('ignore')
 
@@ -14,11 +14,8 @@ class Dataset:
     Step 2 - Build the target variable
     Step 3 - Export data
     """
-    data_folder = "../data/"
-    columns = []
-    export_name = 'data_merged.csv'
     pre_operatoire_cols = [
-        "numero",
+        "id_patient",
         "date_transplantation",
         "heure_arrivee_bloc",
         "pathologie",
@@ -48,7 +45,7 @@ class Dataset:
     ]
 
     donor_cols = [
-        "numero",
+        "id_patient",
         "Age_donor",
         "Sex_donor",
         "BMI_donor",
@@ -63,42 +60,20 @@ class Dataset:
     ]
 
     post_operatoire_cols = [
-        "numero",
+        "id_patient",
         "LOS_first_ventilation",
-        " immediate_extubation",
+        "immediate_extubation",
         "secondary_intubation",
         "Survival_days_27_10_2018"
     ]
 
-    def merge_datasets(self):
-        """
-        Merge pre, post and donor datasets.
-        """
-        static = pd.read_csv(PATH_STATIC_CLEAN)
-
-        df_pre_operatoire = static[self.pre_operatoire_cols]
-        df_donor = static[self.donor_cols]
-        df_post_operatoire = static[self.post_operatoire_cols]
-
-        data = pd.merge(df_pre_operatoire,
-                        df_donor,
-                        how='left',
-                        on="numero")
-
-        data = pd.merge(data,
-                        df_post_operatoire,
-                        how='left',
-                        on='numero')
-
-        return data
-
     def build_training_set(self):
 
-        id_col = "numero"
+        data = pd.read_csv(PATH_STATIC_CLEAN)
 
-        data = self.merge_datasets()
-
-        data.columns = [i.lower() for i in data.columns]
+        data = data[self.pre_operatoire_cols +
+                    self.donor_cols +
+                    self.post_operatoire_cols]
 
         data["target"] = np.nan
         data["target"][(data["secondary_intubation"] == 1)] = "unsuccessful IE"
