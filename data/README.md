@@ -37,18 +37,15 @@ Les catégories sont les suivantes :
 #### Organisation du dossier data
 - **clean** : dossier contenant les `.csv` des variables statiques et dynamiques nettoyées.
 - **raw** : dossier contenant les données brutes (raw).
-- **build_clean_data_from_raw.py** : script permettant de générer les données clean à partir des brutes.
-- **config.py** : fichier de configuration
 
 #### Pour générer les clean à partir des données brutes
 ```
-python build_clean_data_from_raw.py
+python scripts/build_clean_data_from_raw.py
 ```
+
 #### Pour importer les données statiques et dynamiques
 ```
-import sys
-sys.path.insert(1, REPO_ROOT_PATH)  # add the repo root path to your PYTHONPATH
-from data.config import PATH_STATIC_CLEAN, PATH_DYNAMIC_CLEAN
+from transplant.config import PATH_STATIC_CLEAN, PATH_DYNAMIC_CLEAN
 
 df_static = pd.read_csv(PATH_STATIC_CLEAN)
 df_dynamic = pd.read_csv(PATH_DYNAMIC_CLEAN)
@@ -57,13 +54,12 @@ df_dynamic = pd.read_csv(PATH_DYNAMIC_CLEAN)
 #### Pour filtrer par sous catégories
 Par exemple pour filtrer les données respiratoires dans les données dynamiques :
 ```
-import sys
-sys.path.insert(1, REPO_ROOT_PATH)  # add the repo root path to your PYTHONPATH
-from data.config import PATH_DYNAMIC_CLEAN, DYNAMIC_CATEGORIES
+from transplant.config import PATH_DYNAMIC_CLEAN, DYNAMIC_CATEGORIES
 
 df_dynamic = pd.read_csv(PATH_DYNAMIC_CLEAN)
 df_respiratory = df_dynamic[DYNAMIC_CATEGORIES['respiratory']]
 ```
+
 </div>
 <div id="documentation">
 

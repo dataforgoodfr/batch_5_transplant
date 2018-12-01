@@ -1,11 +1,11 @@
 import os
 
 # Paths
-DATA_DIR = os.path.dirname(os.path.realpath(__file__))
-PATH_DYNAMIC_RAW = DATA_DIR + '/raw/dynamic/'
-PATH_DYNAMIC_CLEAN = DATA_DIR + '/clean/dynamic.csv'
-PATH_STATIC_RAW = DATA_DIR + '/raw/static/'
-PATH_STATIC_CLEAN = DATA_DIR + '/clean/static.csv'
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+PATH_DYNAMIC_RAW = ROOT_DIR + '/data/raw/dynamic/'
+PATH_DYNAMIC_CLEAN = ROOT_DIR + '/data/clean/dynamic.csv'
+PATH_STATIC_RAW = ROOT_DIR + '/data/raw/static/'
+PATH_STATIC_CLEAN = ROOT_DIR + '/data/clean/static.csv'
 
 # Dynamic Headers
 DYNAMIC_HEADERS = [
