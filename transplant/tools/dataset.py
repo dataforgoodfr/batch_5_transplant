@@ -1,11 +1,12 @@
 import pandas as pd
 import numpy as np
 import warnings
+from transplant.config import PATH_STATIC_CLEAN
 
 warnings.filterwarnings('ignore')
 
 
-class DimensionDataSet:
+class Dataset:
     """
     Transform csv patient and donors into a dimension dataset that
     can be used for modeling. Following steps are applied:
@@ -13,11 +14,8 @@ class DimensionDataSet:
     Step 2 - Build the target variable
     Step 3 - Export data
     """
-    data_folder = "../data/"
-    columns = []
-    export_name = 'data_merged.csv'
     pre_operatoire_cols = [
-        "numero",
+        "id_patient",
         "date_transplantation",
         "heure_arrivee_bloc",
         "pathologie",
@@ -47,7 +45,7 @@ class DimensionDataSet:
     ]
 
     donor_cols = [
-        "numero",
+        "id_patient",
         "Age_donor",
         "Sex_donor",
         "BMI_donor",
@@ -62,51 +60,20 @@ class DimensionDataSet:
     ]
 
     post_operatoire_cols = [
-        "numero",
+        "id_patient",
         "LOS_first_ventilation",
-        " immediate_extubation",
+        "immediate_extubation",
         "secondary_intubation",
         "Survival_days_27_10_2018"
     ]
 
-    def merge_datasets(self):
-        """
-        Merge pre, post and donor datasets.
-        """
-        dim_patient_preoperatoire = pd.read_csv(
-                                        "{}dim_patient_preoperatoire.csv"
-                                        .format(self.data_folder))
-
-        dim_donneur = pd.read_csv("{}dim_donneur.csv".format(self.data_folder))
-
-        dim_patient_intraoperatoire = pd.read_csv(
-                                        "{}dim_patient_intraoperatoire.csv"
-                                        .format(self.data_folder))
-
-        dim_patient_postoperatoire = pd.read_csv(
-                                        "{}dim_patient_postoperatoire.csv"
-                                        .format(self.data_folder))
-
-        data = pd.merge(dim_patient_preoperatoire[self.pre_operatoire_cols],
-                        dim_donneur[self.donor_cols],
-                        how='left',
-                        on="numero")
-
-        data = pd.merge(data,
-                        dim_patient_postoperatoire[self.post_operatoire_cols],
-                        how='left',
-                        on='numero').rename(columns={' immediate_extubation':
-                                                     'immediate_extubation'})
-
-        return data
-
     def build_training_set(self):
 
-        id_col = "numero"
+        data = pd.read_csv(PATH_STATIC_CLEAN)
 
-        data = self.merge_datasets()
-
-        data.columns = [i.lower() for i in data.columns]
+        data = data[self.pre_operatoire_cols +
+                    self.donor_cols +
+                    self.post_operatoire_cols]
 
         data["target"] = np.nan
         data["target"][(data["secondary_intubation"] == 1)] = "unsuccessful IE"
@@ -115,11 +82,8 @@ class DimensionDataSet:
         data.drop(['secondary_intubation'
                   , 'immediate_extubation'], inplace=True, axis=1)
 
-        return data
-
-    def export_training_set(self):
-        data = self.build_training_set()
-        data.to_csv('{}data_merged.csv'.format(self.data_folder), index=False)
         msg = "Done! Found {} patients with {} variables".format(data.shape[0],
                                                                  data.shape[1])
         print(msg)
+
+        return data
