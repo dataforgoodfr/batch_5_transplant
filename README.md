@@ -40,7 +40,7 @@ Pour en savoir plus sur les environnements et les `PYTHONPATH` voir [ce lien pou
 - Vous pouvez desormais importer depuis un notebook les classes utiles au traitement de données avec la commande: 
 
 ```
-from transplant import dataset
+from transplant.tools.dataset import Dataset
 ```
 
 ## FAQ
