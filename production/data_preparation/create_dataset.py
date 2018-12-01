@@ -9,50 +9,48 @@ class DimensionDataSet:
     """
     Transform csv patient and donors into a dimension dataset that
     can be used for modeling. Following steps are applied:
-    Step 1 - Define feature type
+    Step 1 - Select a subset of columns
     Step 2 - Build the target variable
-    Step 3 - Drop unecessary rows
-    Step 4 - Export data
+    Step 3 - Export data
     """
     data_folder = "../data/"
     columns = []
     export_name = 'data_merged.csv'
-    cat_col = [
+    pre_operatoire_cols = [
+        "numero",
         "date_transplantation",
         "heure_arrivee_bloc",
         "pathologie",
         "age",
-        "sex",
+        "sexe",
+        "Poids",
+        "Taille",
         "other_organ_transplantation",
-        "transplanted_twice_during_study_period",
         "super_urgence",
         "retransplant",
+        "transplanted_twice_during_study_period",
+        "time_on_waiting_liste",
+        "LAS",
         "preoperative_ICU",
         "preoperative_vasopressor",
         "preoperative_mechanical_ventilation",
         "PFO",
+        "body_mass_index",
         "diabetes",
-        "preoperative_pulmonary_hypertension"
+        "preoperative_pulmonary_hypertension",
+        "PAPS",
         "Insuffisance_renale",
         "CMV_receveur",
         "plasmapherese",
         "preoperative_ECMO",
-        "ATCD_chirugicaux",
-        "thoracic_surgery_history",
-        "CMV_donneur",
-        "EBV_donneur",
-        "Sex_donor",
-        "BMI_donor"
+        "thoracic_surgery_history"
     ]
 
-    num_col = [
-        "Poids",
-        "Taille",
-        "time_on_waiting_liste",
-        "LAS",
-        "body_mass_index",
-        "PAPS",
+    donor_cols = [
+        "numero",
         "Age_donor",
+        "Sex_donor",
+        "BMI_donor",
         "Poids_donor",
         "Taille_donor",
         "Donneur_CPT",
@@ -63,12 +61,12 @@ class DimensionDataSet:
         "oto_score"
     ]
 
-    text = [
-        "ATCD_medicaux",
-        "ATCD_chirugicaux"
-    ]
-    target = [
-        'secondary_intubation'
+    post_operatoire_cols = [
+        "numero",
+        "LOS_first_ventilation",
+        " immediate_extubation",
+        "secondary_intubation",
+        "Survival_days_27_10_2018"
     ]
 
     def merge_datasets(self):
@@ -89,15 +87,13 @@ class DimensionDataSet:
                                         "{}dim_patient_postoperatoire.csv"
                                         .format(self.data_folder))
 
-        data = pd.merge(dim_patient_preoperatoire,
-                        dim_donneur,
+        data = pd.merge(dim_patient_preoperatoire[self.pre_operatoire_cols],
+                        dim_donneur[self.donor_cols],
                         how='left',
                         on="numero")
 
         data = pd.merge(data,
-                        dim_patient_postoperatoire[["numero",
-                                                    " immediate_extubation",
-                                                    "secondary_intubation"]],
+                        dim_patient_postoperatoire[self.post_operatoire_cols],
                         how='left',
                         on='numero').rename(columns={' immediate_extubation':
                                                      'immediate_extubation'})
@@ -108,11 +104,8 @@ class DimensionDataSet:
 
         id_col = "numero"
 
-        col_drop = ["Unnamed: 0_x", "Unnamed: 0_y"]
-
         data = self.merge_datasets()
 
-        data.drop(col_drop, axis=1, inplace=True)
         data.columns = [i.lower() for i in data.columns]
 
         data["target"] = np.nan
