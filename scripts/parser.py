@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import pandas as pd
-from scripts.config import *
+from scripts.parser_config import *
 import glob
 from tqdm import tqdm
 import time
