@@ -1,11 +1,12 @@
 import pandas as pd
 import numpy as np
 import warnings
+from transplant.config import PATH_DYNAMIC_CLEAN
 
 warnings.filterwarnings('ignore')
 
 
-class DimensionDataSet:
+class Dataset:
     """
     Transform csv patient and donors into a dimension dataset that
     can be used for modeling. Following steps are applied:
@@ -73,30 +74,21 @@ class DimensionDataSet:
         """
         Merge pre, post and donor datasets.
         """
-        dim_patient_preoperatoire = pd.read_csv(
-                                        "{}dim_patient_preoperatoire.csv"
-                                        .format(self.data_folder))
+        static = pd.read_csv(PATH_STATIC_CLEAN)
 
-        dim_donneur = pd.read_csv("{}dim_donneur.csv".format(self.data_folder))
+        df_pre_operatoire = static[self.pre_operatoire_cols]
+        df_donor = static[self.donor_cols]
+        df_post_operatoire = static[self.post_operatoire_cols]
 
-        dim_patient_intraoperatoire = pd.read_csv(
-                                        "{}dim_patient_intraoperatoire.csv"
-                                        .format(self.data_folder))
-
-        dim_patient_postoperatoire = pd.read_csv(
-                                        "{}dim_patient_postoperatoire.csv"
-                                        .format(self.data_folder))
-
-        data = pd.merge(dim_patient_preoperatoire[self.pre_operatoire_cols],
-                        dim_donneur[self.donor_cols],
+        data = pd.merge(df_pre_operatoire,
+                        df_donor,
                         how='left',
                         on="numero")
 
         data = pd.merge(data,
-                        dim_patient_postoperatoire[self.post_operatoire_cols],
+                        df_post_operatoire,
                         how='left',
-                        on='numero').rename(columns={' immediate_extubation':
-                                                     'immediate_extubation'})
+                        on='numero')
 
         return data
 
@@ -115,11 +107,8 @@ class DimensionDataSet:
         data.drop(['secondary_intubation'
                   , 'immediate_extubation'], inplace=True, axis=1)
 
-        return data
-
-    def export_training_set(self):
-        data = self.build_training_set()
-        data.to_csv('{}data_merged.csv'.format(self.data_folder), index=False)
         msg = "Done! Found {} patients with {} variables".format(data.shape[0],
                                                                  data.shape[1])
         print(msg)
+
+        return data
