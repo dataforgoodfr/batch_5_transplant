@@ -59,7 +59,6 @@ class Dataset:
     ]
 
     donor_cols = [
-        "id_patient",
         "Age_donor",
         "Sex_donor",
         "BMI_donor",
@@ -74,7 +73,6 @@ class Dataset:
     ]
 
     post_operatoire_cols = [
-        "id_patient",
         "LOS_first_ventilation",
         "immediate_extubation",
         "secondary_intubation",
