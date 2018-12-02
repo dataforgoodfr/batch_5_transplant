@@ -93,7 +93,7 @@ class Dataset:
 
         # Success A
         data['target'] = np.where((data.immediate_extubation == 1) &
-                               (data.secondary_intubation == 0), 1, np.nan)
+                                  (data.secondary_intubation == 0), 1, np.nan)
 
         # Success B
         data['target'] = np.where((data.target == 1) |
