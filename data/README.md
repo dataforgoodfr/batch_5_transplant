@@ -396,6 +396,24 @@ Ces dernières sont détaillées dans les sections qui suivent.
 
 </div>
 </div>
+
+#### Target variable 
+
+La variable target est définie comme le succès de l'operation que nous essayons de prédire. Nous distinguons les cas suivants: 
+
+- Succès A: le patient a été extubé immédiatement à la fin du bloc opératoire et n'a pas été réintubé par la suite. Cela correspond à l'opérateur logique: 
+
+```
+Immediate_extubation = 1 AND secondary_intubation = 0
+```
+
+Succes B: Le patient n'a pas été extubé immédiatement à la fin du bloc opératoire, n'a pas été réintubé par la suite et est resté moins de 48h sous assistance, durée pendant laquelle il n'est pas décédé. Cette condition correspond à l'opérateur logique: 
+
+```
+Immediate_extubation = 0 AND secondary_intubation = 0 AND LOS_first_ventilation < 2 AND Survival_days >= 2 
+```
+- Echec: tous les autres cas. 
+
 <div id="dynamic_variables">
 
 ### Variable Dynamiques
