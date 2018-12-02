@@ -1,6 +1,7 @@
 import os
 import glob
 import pandas as pd
+import numpy as np
 from transplant.config import PATH_DYNAMIC_RAW, PATH_DYNAMIC_CLEAN, PATH_STATIC_RAW, PATH_STATIC_CLEAN
 
 
@@ -57,9 +58,12 @@ def clean_static_raw(df):
 
     # Drop useless data
     df = df.dropna(subset=['id_patient'])  # drop rows with nan in id_patient
+    df = df[df['Survival_days_27_10_2018'] != 'xxx']  # drop unknown survival
 
     # Format dtypes
     df['id_patient'] = df['id_patient'].astype(int)
+    df['Survival_days_27_10_2018'] = \
+        df['Survival_days_27_10_2018'].astype(int)
 
     return df
 
