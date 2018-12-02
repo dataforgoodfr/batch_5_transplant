@@ -3,7 +3,7 @@ import numpy as np
 import warnings
 from sklearn.model_selection import train_test_split
 
-from transplant.config import PATH_STATIC_CLEAN
+from transplant.config import PATH_STATIC_CLEAN, PATH_DYNAMIC_CLEAN
 
 warnings.filterwarnings('ignore')
 
@@ -103,22 +103,52 @@ class Dataset:
                                   (data.Survival_days_27_10_2018 >= 2)), 1, 0)
 
         # Drop post_operation variables
-        data.drop(['secondary_intubation'
-                  , 'immediate_extubation'
-                  , 'LOS_first_ventilation'
-                  , 'Survival_days_27_10_2018']
-                  , inplace=True
-                  , axis=1)
+        data.drop(['secondary_intubation',
+                   'immediate_extubation',
+                   'LOS_first_ventilation',
+                   'Survival_days_27_10_2018'],
+                  inplace=True,
+                  axis=1)
 
         return self._sample_data(data)
+
+    def get_dynamic(self):
+
+        dynamic = pd.read_csv(PATH_DYNAMIC_CLEAN)
+        static = pd.read_csv(PATH_STATIC_CLEAN)
+        date_transplant = static[['id_patient', 'date_transplantation']]
+
+        # Create clean timestamp based on time and transplantation date.
+
+        df = pd.merge(dynamic, date_transplant, on='id_patient')
+        df['timestamp'] = pd.to_datetime(df.date_transplantation +
+                                         '-' + df.time)
+        df.drop(['date_transplantation',
+                 'time'], inplace=True, axis=1)
+
+        # Truncate dynamic file to time_offset before end of operation
+
+        tmp_offset = df[['id_patient', 'timestamp']].groupby('id_patient') \
+                                                    .agg(['max']) \
+                                                    .reset_index()
+        tmp_offset.columns = tmp_offset.columns.droplevel(1)
+        tmp_offset['offset_time'] = \
+            tmp_offset.timestamp - datetime.timedelta(minutes=self.time_offset)
+
+        df = pd.merge(df, tmp_offset[['id_patient', 'offset_time']],
+                      on='id_patient')
+        df = df[df['timestamp'] < df['offset_time']]
+        df.drop(['offset_time'], inplace=True, axis=1)
+
+        return self._sample_data(df)
 
     def _sample_data(self, df):
         if not self.test and not self.train:
             return df
 
-        train_df, test_df = train_test_split(df
-                                             , test_size=0.3
-                                             , random_state=self._random_state)
+        train_df, test_df = train_test_split(df,
+                                             test_size=0.3,
+                                             random_state=self._random_state)
 
         if self.train:
             return train_df
