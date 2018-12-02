@@ -24,6 +24,7 @@ Les catégories sont les suivantes :
     - <a href="#patient_intraoperative">Patient Intraoperative</a>
     - <a href="#patient_postoperative">Patient Postoperative</a>
     - <a href="#donor">Donor</a>
+    - <a href="#target">Target variable</a>
 - <a href="#dynamic_variables">**Variables Dynamiques**</a>
     - <a href="#haemodynamic">Haemodynamic</a>
     - <a href="#respiratory">Respiratory</a>
@@ -397,6 +398,8 @@ Ces dernières sont détaillées dans les sections qui suivent.
 </div>
 </div>
 
+<div id="target">
+
 #### Target variable 
 
 La variable target est définie comme le succès de l'operation que nous essayons de prédire. Nous distinguons les cas suivants: 
@@ -413,6 +416,8 @@ Succes B: Le patient n'a pas été extubé immédiatement à la fin du bloc opé
 Immediate_extubation = 0 AND secondary_intubation = 0 AND LOS_first_ventilation < 2 AND Survival_days >= 2 
 ```
 - Echec: tous les autres cas. 
+
+</div>
 
 <div id="dynamic_variables">
 
