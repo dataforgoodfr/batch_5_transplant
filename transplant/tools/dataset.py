@@ -87,12 +87,28 @@ class Dataset:
                     self.donor_cols +
                     self.post_operatoire_cols]
 
-        data["target"] = np.nan
-        data["target"][(data["secondary_intubation"] == 1)] = "unsuccessful IE"
-        data["target"][(data["secondary_intubation"] == 0)] = "successful IE"
+        # See https://github.com/dataforgoodfr/batch_5_transplant/blob/master/data/README.md#target
 
+        data['target'] = np.nan
+
+        # Success A
+        data['target'] = np.where((data.immediate_extubation == 1) &
+                               (data.secondary_intubation == 0), 1, np.nan)
+
+        # Success B
+        data['target'] = np.where((data.target == 1) |
+                                  ((data.immediate_extubation == 0) &
+                                  (data.secondary_intubation == 0) &
+                                  (data.LOS_first_ventilation < 2) &
+                                  (data.Survival_days_27_10_2018 >= 2)), 1, 0)
+
+        # Drop post_operation variables
         data.drop(['secondary_intubation'
-                  , 'immediate_extubation'], inplace=True, axis=1)
+                  , 'immediate_extubation'
+                  , 'LOS_first_ventilation'
+                  , 'Survival_days_27_10_2018']
+                  , inplace=True
+                  , axis=1)
 
         return self._sample_data(data)
 
