@@ -116,7 +116,9 @@ class Dataset:
         if not self.test and not self.train:
             return df
 
-        train_df, test_df = train_test_split(df, test_size=0.3, random_state=self._random_state)
+        train_df, test_df = train_test_split(df
+                                             , test_size=0.3
+                                             , random_state=self._random_state)
 
         if self.train:
             return train_df
