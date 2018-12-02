@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import warnings
+from sklearn.model_selection import train_test_split
+
 from transplant.config import PATH_STATIC_CLEAN
 
 warnings.filterwarnings('ignore')
@@ -14,6 +16,18 @@ class Dataset:
     Step 2 - Build the target variable
     Step 3 - Export data
     """
+
+    test = False
+    train = False
+    time_offset = 30
+
+    _random_state = 1
+
+    def __init__(self, test=False, train=False, time_offset=30):
+        self.test = test
+        self.train = train
+        self.time_offset = time_offset
+
     pre_operatoire_cols = [
         "id_patient",
         "date_transplantation",
@@ -67,7 +81,7 @@ class Dataset:
         "Survival_days_27_10_2018"
     ]
 
-    def build_training_set(self):
+    def get_static(self):
 
         data = pd.read_csv(PATH_STATIC_CLEAN)
 
@@ -86,4 +100,19 @@ class Dataset:
                                                                  data.shape[1])
         print(msg)
 
-        return data
+        return self._sample_data(data)
+
+    def _sample_data(self, df):
+        if not self.test and not self.train:
+            return df
+
+        train_df, test_df = train_test_split(df, test_size=0.3, random_state=self._random_state)
+
+        if self.train:
+            return train_df
+
+        if self.test:
+            return self._drop_target_column(test_df)
+
+    def _drop_target_column(self, df):
+        return df.drop(['target'], axis=1)
