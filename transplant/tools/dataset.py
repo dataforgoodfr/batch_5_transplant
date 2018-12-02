@@ -96,10 +96,6 @@ class Dataset:
         data.drop(['secondary_intubation'
                   , 'immediate_extubation'], inplace=True, axis=1)
 
-        msg = "Done! Found {} patients with {} variables".format(data.shape[0],
-                                                                 data.shape[1])
-        print(msg)
-
         return self._sample_data(data)
 
     def _sample_data(self, df):
