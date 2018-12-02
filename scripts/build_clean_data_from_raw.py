@@ -76,6 +76,7 @@ def clean_static_raw(df):
 
     # Drop useless data
     df = df.dropna(subset=['id_patient'])  # drop rows with nan in id_patient
+    df = df[df['Survival_days_27_10_2018'] != 'xxx']  # drop unknown survival
 
     # Replace wrong dates in date_sortie_bloc by NaNs
     df_static.loc[df_static['date_sortie_bloc'] < datetime(2000, 1, 1),
@@ -83,6 +84,8 @@ def clean_static_raw(df):
 
     # Format dtypes
     df['id_patient'] = df['id_patient'].astype(int)
+    df['Survival_days_27_10_2018'] = \
+        df['Survival_days_27_10_2018'].astype(int)
 
     return df
 
