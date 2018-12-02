@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import warnings
+from sklearn.model_selection import train_test_split
+
 from transplant.config import PATH_STATIC_CLEAN
 
 warnings.filterwarnings('ignore')
@@ -14,6 +16,18 @@ class Dataset:
     Step 2 - Build the target variable
     Step 3 - Export data
     """
+
+    test = False
+    train = False
+    time_offset = 30
+
+    _random_state = 1
+
+    def __init__(self, test=False, train=False, time_offset=30):
+        self.test = test
+        self.train = train
+        self.time_offset = time_offset
+
     pre_operatoire_cols = [
         "id_patient",
         "date_transplantation",
@@ -45,7 +59,6 @@ class Dataset:
     ]
 
     donor_cols = [
-        "id_patient",
         "Age_donor",
         "Sex_donor",
         "BMI_donor",
@@ -60,14 +73,13 @@ class Dataset:
     ]
 
     post_operatoire_cols = [
-        "id_patient",
         "LOS_first_ventilation",
         "immediate_extubation",
         "secondary_intubation",
         "Survival_days_27_10_2018"
     ]
 
-    def build_training_set(self):
+    def get_static(self):
 
         data = pd.read_csv(PATH_STATIC_CLEAN)
 
@@ -75,15 +87,44 @@ class Dataset:
                     self.donor_cols +
                     self.post_operatoire_cols]
 
-        data["target"] = np.nan
-        data["target"][(data["secondary_intubation"] == 1)] = "unsuccessful IE"
-        data["target"][(data["secondary_intubation"] == 0)] = "successful IE"
+        # See https://github.com/dataforgoodfr/batch_5_transplant/blob/master/data/README.md#target
 
+        data['target'] = np.nan
+
+        # Success A
+        data['target'] = np.where((data.immediate_extubation == 1) &
+                               (data.secondary_intubation == 0), 1, np.nan)
+
+        # Success B
+        data['target'] = np.where((data.target == 1) |
+                                  ((data.immediate_extubation == 0) &
+                                  (data.secondary_intubation == 0) &
+                                  (data.LOS_first_ventilation < 2) &
+                                  (data.Survival_days_27_10_2018 >= 2)), 1, 0)
+
+        # Drop post_operation variables
         data.drop(['secondary_intubation'
-                  , 'immediate_extubation'], inplace=True, axis=1)
+                  , 'immediate_extubation'
+                  , 'LOS_first_ventilation'
+                  , 'Survival_days_27_10_2018']
+                  , inplace=True
+                  , axis=1)
 
-        msg = "Done! Found {} patients with {} variables".format(data.shape[0],
-                                                                 data.shape[1])
-        print(msg)
+        return self._sample_data(data)
 
-        return data
+    def _sample_data(self, df):
+        if not self.test and not self.train:
+            return df
+
+        train_df, test_df = train_test_split(df
+                                             , test_size=0.3
+                                             , random_state=self._random_state)
+
+        if self.train:
+            return train_df
+
+        if self.test:
+            return self._drop_target_column(test_df)
+
+    def _drop_target_column(self, df):
+        return df.drop(['target'], axis=1)
