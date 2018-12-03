@@ -7,6 +7,11 @@ from transplant.config import PATH_DYNAMIC_RAW, PATH_DYNAMIC_CLEAN,\
     PATH_STATIC_RAW, PATH_STATIC_CLEAN
 
 
+PATIENT_TO_DROP = [
+    405  # Missing data for static vars:  Survival_days_27_10_2018 = 'xxx'
+]
+
+
 # Dynamic variables methods
 #######################################
 def load_dynamic_raw(path_dynamic_raw):
@@ -29,10 +34,11 @@ def clean_dynamic_raw(df, df_static):
     # Change column order: put [id_patient, time] at first
     df = df.set_index(['id_patient', 'time']).reset_index()
 
-    # Drop useless data
+    # Drop corrupted or useless data
     col_to_drop = [col for col in df.columns if col.startswith('Unnamed:')]
     df = df.drop(columns=col_to_drop)
     df = df.dropna(subset=['id_patient'])  # drop rows with nan in id_patient
+    df = df[~df.id_patient.isin(PATIENT_TO_DROP)]
 
     # Format dtypes
     df['id_patient'] = df['id_patient'].astype(int)
@@ -74,9 +80,9 @@ def clean_static_raw(df):
     df = df.rename(columns={'numero': 'id_patient'})
     df.columns = [c.strip() for c in df.columns]   # trim spaces
 
-    # Drop useless data
+    # Drop corrupted or useless data
     df = df.dropna(subset=['id_patient'])  # drop rows with nan in id_patient
-    df = df[df['Survival_days_27_10_2018'] != 'xxx']  # drop unknown survival
+    df = df[~df.id_patient.isin(PATIENT_TO_DROP)]
 
     # Replace wrong dates in date_sortie_bloc by NaNs
     df_static.loc[df_static['date_sortie_bloc'] < datetime(2000, 1, 1),
