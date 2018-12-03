@@ -6,8 +6,6 @@ from sklearn.model_selection import train_test_split
 
 from transplant.config import PATH_STATIC_CLEAN, PATH_DYNAMIC_CLEAN
 
-warnings.filterwarnings('ignore')
-
 
 class Dataset:
     """
