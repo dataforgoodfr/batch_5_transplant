@@ -117,8 +117,6 @@ class Dataset:
 
         df = pd.read_csv(PATH_DYNAMIC_CLEAN)
 
-        # Create clean timestamp based on time and transplantation date.
-
         df['time'] = pd.to_datetime(df.time)
 
         # Truncate dynamic file to time_offset before end of operation
@@ -134,6 +132,11 @@ class Dataset:
                       on='id_patient')
         df = df[df['time'] < df['offset_time']]
         df.drop(['offset_time'], inplace=True, axis=1)
+
+        # Filter result based on static set
+
+        selector = self.get_static()['id_patient']
+        df = df[df.id_patient.isin(selector)]
 
         return df
 
