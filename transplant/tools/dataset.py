@@ -1,10 +1,16 @@
 import pandas as pd
 import numpy as np
 import warnings
+<<<<<<< HEAD
 import datetime
 from sklearn.model_selection import train_test_split
 
 from transplant.config import PATH_STATIC_CLEAN, PATH_DYNAMIC_CLEAN
+=======
+from sklearn.model_selection import train_test_split
+
+from transplant.config import PATH_STATIC_CLEAN
+>>>>>>> master
 
 warnings.filterwarnings('ignore')
 
