@@ -6,6 +6,7 @@ PATH_DYNAMIC_RAW = ROOT_DIR + '/data/raw/dynamic/'
 PATH_DYNAMIC_CLEAN = ROOT_DIR + '/data/clean/dynamic.csv'
 PATH_STATIC_RAW = ROOT_DIR + '/data/raw/static/'
 PATH_STATIC_CLEAN = ROOT_DIR + '/data/clean/static.csv'
+PATH_DOCS = ROOT_DIR + '/transplant/data/variables_documentation.csv'
 
 # Dynamic Headers
 DYNAMIC_HEADERS = [

@@ -90,6 +90,8 @@ def clean_static_raw(df):
 
     # Format dtypes
     df['id_patient'] = df['id_patient'].astype(int)
+    df['Taille'] = df['Taille'].astype(int)
+    df['time_on_waiting_liste'] = df['time_on_waiting_liste'].astype(int)
     df['Survival_days_27_10_2018'] = \
         df['Survival_days_27_10_2018'].astype(int)
 
