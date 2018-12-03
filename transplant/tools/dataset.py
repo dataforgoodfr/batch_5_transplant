@@ -115,33 +115,27 @@ class Dataset:
 
     def get_dynamic(self):
 
-        dynamic = pd.read_csv(PATH_DYNAMIC_CLEAN)
-        static = pd.read_csv(PATH_STATIC_CLEAN)
-        date_transplant = static[['id_patient', 'date_transplantation']]
+        df = pd.read_csv(PATH_DYNAMIC_CLEAN)
 
         # Create clean timestamp based on time and transplantation date.
 
-        df = pd.merge(dynamic, date_transplant, on='id_patient')
-        df['timestamp'] = pd.to_datetime(df.date_transplantation +
-                                         '-' + df.time)
-        df.drop(['date_transplantation',
-                 'time'], inplace=True, axis=1)
+        df['time'] = pd.to_datetime(df.time)
 
         # Truncate dynamic file to time_offset before end of operation
 
-        tmp_offset = df[['id_patient', 'timestamp']].groupby('id_patient') \
-                                                    .agg(['max']) \
-                                                    .reset_index()
+        tmp_offset = df[['id_patient', 'time']].groupby('id_patient') \
+                                               .agg(['max']) \
+                                               .reset_index()
         tmp_offset.columns = tmp_offset.columns.droplevel(1)
         tmp_offset['offset_time'] = \
-            tmp_offset.timestamp - datetime.timedelta(minutes=self.time_offset)
+            tmp_offset.time - datetime.timedelta(minutes=self.time_offset)
 
         df = pd.merge(df, tmp_offset[['id_patient', 'offset_time']],
                       on='id_patient')
-        df = df[df['timestamp'] < df['offset_time']]
+        df = df[df['time'] < df['offset_time']]
         df.drop(['offset_time'], inplace=True, axis=1)
 
-        return self._sample_data(df)
+        return df
 
     def _sample_data(self, df):
         if not self.test and not self.train:
