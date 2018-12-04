@@ -31,9 +31,11 @@ class Dataset:
 
         data = pd.read_csv(PATH_STATIC_CLEAN)
 
-        data = data[STATIC_CATEGORIES['patient_preoperative'] +
-                    STATIC_CATEGORIES['donor_filtered'] +
-                    STATIC_CATEGORIES['patient_postoperative_filtered']]
+        cols = np.unique(STATIC_CATEGORIES['patient_preoperative'] +
+                         STATIC_CATEGORIES['donor'] +
+                         STATIC_CATEGORIES['patient_postoperative_filtered'])
+
+        data = data[list(cols)]
 
         # See https://github.com/dataforgoodfr/batch_5_transplant/blob/master/data/README.md#target
 

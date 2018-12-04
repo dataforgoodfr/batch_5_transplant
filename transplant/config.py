@@ -148,10 +148,5 @@ STATIC_CATEGORIES = {
         'id_patient', 'CMV_donneur', 'EBV_donneur', 'Age_donor', 'Sex_donor',
         'BMI_donor', 'Poids_donor', 'Taille_donor', 'Donneur_CPT',
         'Tabagisme_donor', 'Aspirations_donor', 'RX_donor', 'PF_donor',
-        'oto_score'],
-    'donor_filtered': [
-        'CMV_donneur', 'EBV_donneur', 'Age_donor', 'Sex_donor',
-        'BMI_donor', 'Poids_donor', 'Taille_donor', 'Donneur_CPT',
-        'Tabagisme_donor', 'Aspirations_donor', 'RX_donor', 'PF_donor',
         'oto_score']
 }
