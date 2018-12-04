@@ -41,7 +41,7 @@ def clean_dynamic_raw(df, df_static):
     df = df[~df.id_patient.isin(PATIENT_TO_DROP)]
 
     # Format dtypes
-    df['id_patient'] = df['id_patient'].astype(int)
+    df = cast_integers(df)
 
     # Convert time column to a real datetime.
     # We need to join df_static to retrieve the date and apply
@@ -84,17 +84,27 @@ def clean_static_raw(df):
     df = df.dropna(subset=['id_patient'])  # drop rows with nan in id_patient
     df = df[~df.id_patient.isin(PATIENT_TO_DROP)]
 
-    # Replace wrong dates in date_sortie_bloc by NaNs
-    df_static.loc[df_static['date_sortie_bloc'] < datetime(2000, 1, 1),
-                  'date_sortie_bloc'] = np.NaN
+    # Replace null values (date 1900, NF, etc.) by NaNs
+    df.loc[df['date_sortie_bloc'] < datetime(2000, 1, 1),
+           'date_sortie_bloc'] = np.NaN
+    df.replace({'NF': np.NaN}, inplace=True)
 
     # Format dtypes
-    df['id_patient'] = df['id_patient'].astype(int)
-    df['Taille'] = df['Taille'].astype(int)
-    df['time_on_waiting_liste'] = df['time_on_waiting_liste'].astype(int)
-    df['Survival_days_27_10_2018'] = \
-        df['Survival_days_27_10_2018'].astype(int)
+    df = cast_integers(df)
 
+    return df
+
+
+# Common methods
+#######################################
+def cast_integers(df):
+    """Try to cast all columns of a DataFrame to integer"""
+    for col in df.columns:
+        try:
+            if (df[col].astype(int) == df[col]).all():
+                df[col] = df[col].astype(int)
+        except (ValueError, TypeError):
+            pass
     return df
 
 
