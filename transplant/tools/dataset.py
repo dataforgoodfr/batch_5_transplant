@@ -4,7 +4,8 @@ import warnings
 import datetime
 from sklearn.model_selection import train_test_split
 
-from transplant.config import PATH_STATIC_CLEAN, PATH_DYNAMIC_CLEAN, STATIC_CATEGORIES
+from transplant.config import (PATH_STATIC_CLEAN, PATH_DYNAMIC_CLEAN,
+STATIC_CATEGORIES, DYNAMIC_CATEGORIES, DYNAMIC_HEADERS)
 
 
 class Dataset:
@@ -19,6 +20,9 @@ class Dataset:
     test = False
     train = False
     time_offset = 30
+    smooth_dynamic = False
+    q_high = 0.95  # Upper quantile to filter
+    q_low = 0.05   # Lower quantile to filter outliers
 
     _random_state = 1
 
@@ -53,10 +57,7 @@ class Dataset:
                                   (data.Survival_days_27_10_2018 >= 2)), 1, 0)
 
         # Drop post_operation variables
-        data.drop(['secondary_intubation',
-                   'immediate_extubation',
-                   'LOS_first_ventilation',
-                   'Survival_days_27_10_2018'],
+        data.drop(STATIC_CATEGORIES['patient_postoperative_filtered'],
                   inplace=True,
                   axis=1)
 
@@ -86,6 +87,29 @@ class Dataset:
 
         selector = self.get_static()['id_patient']
         df = df[df.id_patient.isin(selector)]
+
+        # To do - finish smooth_dynamic
+        if smooth_dynamic:
+
+            m = pd.melt(df, id_vars=['id_patient',
+                                     'time'])
+
+            def _quantile(x):
+                result = {'q_high': x.value.quantile(0.95),
+                          'q_low': x.value.quantile(0.05)}
+                return pd.Series(result, name='quantiles')
+
+            limits = df_melt.groupby(['id_patient',
+                                      'variable'])\
+                            .apply(above_quantile).reset_index()
+
+            m['shift'] = m.groupby(['id_patient',
+                                    'variable']).value.shift(1)
+
+            d = pd.merge(m, limits)
+
+            d['val'] = np.where((d.value > d.q_high) | (d.value < d.q_low),
+                                d.shift, d.value)
 
         return df
 
