@@ -141,8 +141,16 @@ STATIC_CATEGORIES = {
         'in_hospital_mortality', '30_d_survival', 'P_F_H0', 'PGD_H0',
         'P_F_end_surgery', 'PGD_end_surgery', 'time_last_PF', 'PDG_h24',
         'PGD_h48', 'PGD3', 'date_de_deces', 'Survival_days_27_10_2018'],
+    'patient_postoperative_filtered': [
+        'LOS_first_ventilation', 'immediate_extubation',
+        'secondary_intubation', 'Survival_days_27_10_2018'],
     'donor': [
         'id_patient', 'CMV_donneur', 'EBV_donneur', 'Age_donor', 'Sex_donor',
+        'BMI_donor', 'Poids_donor', 'Taille_donor', 'Donneur_CPT',
+        'Tabagisme_donor', 'Aspirations_donor', 'RX_donor', 'PF_donor',
+        'oto_score'],
+    'donor_filtered': [
+        'CMV_donneur', 'EBV_donneur', 'Age_donor', 'Sex_donor',
         'BMI_donor', 'Poids_donor', 'Taille_donor', 'Donneur_CPT',
         'Tabagisme_donor', 'Aspirations_donor', 'RX_donor', 'PF_donor',
         'oto_score']
