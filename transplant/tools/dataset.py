@@ -4,7 +4,7 @@ import warnings
 import datetime
 from sklearn.model_selection import train_test_split
 
-from transplant.config import PATH_STATIC_CLEAN, PATH_DYNAMIC_CLEAN
+from transplant.config import PATH_STATIC_CLEAN, PATH_DYNAMIC_CLEAN, STATIC_CATEGORIES
 
 
 class Dataset:
@@ -27,64 +27,13 @@ class Dataset:
         self.train = train
         self.time_offset = time_offset
 
-    pre_operatoire_cols = [
-        "id_patient",
-        "date_transplantation",
-        "heure_arrivee_bloc",
-        "pathologie",
-        "age",
-        "sexe",
-        "Poids",
-        "Taille",
-        "other_organ_transplantation",
-        "super_urgence",
-        "retransplant",
-        "transplanted_twice_during_study_period",
-        "time_on_waiting_liste",
-        "LAS",
-        "preoperative_ICU",
-        "preoperative_vasopressor",
-        "preoperative_mechanical_ventilation",
-        "PFO",
-        "body_mass_index",
-        "diabetes",
-        "preoperative_pulmonary_hypertension",
-        "PAPS",
-        "Insuffisance_renale",
-        "CMV_receveur",
-        "plasmapherese",
-        "preoperative_ECMO",
-        "thoracic_surgery_history"
-    ]
-
-    donor_cols = [
-        "Age_donor",
-        "Sex_donor",
-        "BMI_donor",
-        "Poids_donor",
-        "Taille_donor",
-        "Donneur_CPT",
-        "Tabagisme_donor",
-        "Aspirations_donor",
-        "RX_donor",
-        "PF_donor",
-        "oto_score"
-    ]
-
-    post_operatoire_cols = [
-        "LOS_first_ventilation",
-        "immediate_extubation",
-        "secondary_intubation",
-        "Survival_days_27_10_2018"
-    ]
-
     def get_static(self):
 
         data = pd.read_csv(PATH_STATIC_CLEAN)
 
-        data = data[self.pre_operatoire_cols +
-                    self.donor_cols +
-                    self.post_operatoire_cols]
+        data = data[STATIC_CATEGORIES['patient_preoperative'] +
+                    STATIC_CATEGORIES['donor_filtered'] +
+                    STATIC_CATEGORIES['patient_postoperative_filtered']]
 
         # See https://github.com/dataforgoodfr/batch_5_transplant/blob/master/data/README.md#target
 
