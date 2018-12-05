@@ -8,38 +8,38 @@ La classe `Dataset` vous permet d'accéder aux données statiques et dynamiques 
 
 _Variables_
 
-- **train**: `False` ou `True`. Détermine si la classe `Dataset` à renvoyer est le training set sur lequel le modèle sera entrainé.
-- **test**: `False` ou `True`. Détermine si la classe `Dataset` à renvoyer est le test set sur lequel le modèle sera évalué.
-- **time_offset**: Détermine le moment (en minutes) auquel les données dynamiques seront tronquées. Par exemple, un `time_offset` à 30 signifie que les données dynamiques seront arrêtées 30 minutes avant la sortie du bloc.
+- **time_offset**: Détermine le moment (en minutes) auquel les données dynamiques seront tronquées. Par exemple, un `time_offset` à 30 signifie que les données dynamiques seront arrêtées 30 minutes avant la dernière mesure enregistrée par les instruments de mesure. 
 
 _Fonctions_
 
-  - **get_static**: retourne un `DataFrame` des données statiques des patients. Une colonne `target` y est ajoutée et permet de déterminer la variable à prédire. A noter que la valeur de target sera `NaN` dans le cas où la variable `test` est égale à `True`.
-  - **get_dynamic**: retourne un `DataFrame` des données dynamiques par patient et timestamp à `time_offset` avant la sortie du bloc.
+  - **get_static**: retourne un `tuple` composé des dataframes `training` et `test` basé sur les données statiques des patients. La colonne `target` est  ajoutée au dataframe `training`. Usage:
+
+  ```python
+
+  from transplant.tools.dataset import Dataset
+
+  dataset = Dataset()
+
+  train, test = dataset.get_static()
+
+  ```
+
+  - **get_dynamic**: retourne un `tuple` composé des datframes `training` et `test` basé sur les données  dynamiques des patients. Notez que les données sont filtrées à `time_offset` minutes avant la sortie du bloc. Usage:
+
+  ```python
+
+  from transplant.tools.dataset import Dataset
+
+  dataset = Dataset(time_offset=30)
+
+  train, test = dataset.get_dynamic()
+
+  ```
+
   - **get_dynamic_features**: retourne un dataframe caractérisant les valeurs dynamiques à `time_offset` avant la sortie du bloc.
   - **get_merge_data**: merge de `static` and `dynamic_feature`. Cette fonction retourne un `DataFrame` où chaque ligne correspond à un patient. Les colonnes correspondent à l'ensemble des variables statiques et dynamiques à `time_offset` avant la sortie du bloc.
 
-_Evaluation_
+_class_ *Evaluation*
 
   - **get_test_data**: retourne un `DataFrame` composé de l'ensemble des données statiques et dynamiques à 30 minutes avant la sortie du bloc.
   - **evaluate_prediction(y)**: affiche des indicateurs de performance du modèle. `y` correspond à un `DataFrame` composé des variables `id_patient` et `prediction`.
-
-## Example
-
-Voici un exemple d'appel de la classe `Dataset` qui permet de recuperer le training set: 
-
-```python
-
-from transplant.tools.dataset import Dataset
-
-#initialize class Dataset
-dataset = Dataset()
-
-dataset.train = True
-dataset.test = False
-dataset.time_offset = 30
-
-#call a function of interest
-training_set = dataset.get_merge_data()
-
-```
