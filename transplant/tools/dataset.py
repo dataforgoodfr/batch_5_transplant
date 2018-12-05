@@ -65,7 +65,7 @@ class Dataset:
 
     def get_dynamic(self):
 
-        df = pd.read_csv(PATH_DYNAMIC_CLEAN)
+        df = pd.read_csv(PATH_DYNAMIC_CLEAN, parse_dates=['time'])
 
         df['time'] = pd.to_datetime(df.time)
 
