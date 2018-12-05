@@ -66,7 +66,6 @@ class Dataset:
 
         df = pd.read_csv(PATH_DYNAMIC_CLEAN, parse_dates=['time'])
 
-        df['time'] = pd.to_datetime(df.time)
 
         # Truncate dynamic file to time_offset before end of operation
 
