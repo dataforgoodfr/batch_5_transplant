@@ -42,18 +42,18 @@ class Dataset:
 
         # See https://github.com/dataforgoodfr/batch_5_transplant/blob/master/data/README.md#target
 
-        data['target'] = np.nan
+        data['target'] = 0
 
         # Success A
-        data['target'] = np.where((data.immediate_extubation == 1) &
-                                  (data.secondary_intubation == 0), 1, np.nan)
+        idx_successA = (data.immediate_extubation == 1) &
+                        (data.secondary_intubation == 0)
 
         # Success B
-        data['target'] = np.where((data.target == 1) |
-                                  ((data.immediate_extubation == 0) &
-                                  (data.secondary_intubation == 0) &
-                                  (data.LOS_first_ventilation < 2) &
-                                  (data.Survival_days_27_10_2018 >= 2)), 1, 0)
+        idx_successB = (data.immediate_extubation == 0) &
+                        (data.secondary_intubation == 0) &
+                        (data.LOS_first_ventilation < 2) &
+                        (data.Survival_days_27_10_2018 >= 2)
+        data.loc[idx_successA | idx_successB, 'target'] = 1
 
         # Drop post_operation variables
         data.drop(STATIC_CATEGORIES['patient_postoperative_filtered'],
