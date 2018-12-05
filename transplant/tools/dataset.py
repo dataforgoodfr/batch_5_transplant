@@ -77,29 +77,6 @@ class Dataset:
         selector = self.get_static()['id_patient']
         df = df[df.id_patient.isin(selector)]
 
-        # To do - finish smooth_dynamic
-        if smooth_dynamic:
-
-            m = pd.melt(df, id_vars=['id_patient',
-                                     'time'])
-
-            def _quantile(x):
-                result = {'q_high': x.value.quantile(0.95),
-                          'q_low': x.value.quantile(0.05)}
-                return pd.Series(result, name='quantiles')
-
-            limits = df_melt.groupby(['id_patient',
-                                      'variable'])\
-                            .apply(above_quantile).reset_index()
-
-            m['shift'] = m.groupby(['id_patient',
-                                    'variable']).value.shift(1)
-
-            d = pd.merge(m, limits)
-
-            d['val'] = np.where((d.value > d.q_high) | (d.value < d.q_low),
-                                d.shift, d.value)
-
         return df
 
     def _sample_data(self, df):
