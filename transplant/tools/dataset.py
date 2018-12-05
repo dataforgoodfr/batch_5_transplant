@@ -18,18 +18,9 @@ class Dataset:
     Step 3 - Export data
     """
 
-    test = False
-    train = False
-    time_offset = 30
-    smooth_dynamic = False
-    q_high = 0.95  # Upper quantile to filter
-    q_low = 0.05   # Lower quantile to filter outliers
-
     _random_state = 1
 
-    def __init__(self, test=False, train=False, time_offset=30):
-        self.test = test
-        self.train = train
+    def __init__(self, time_offset=30):
         self.time_offset = time_offset
 
     def get_static(self):
@@ -47,13 +38,13 @@ class Dataset:
         data['target'] = 0
 
         # Success A
-        idx_successA = (data.immediate_extubation == 1) &
-                        (data.secondary_intubation == 0)
+        idx_successA = (data.immediate_extubation == 1) & \
+                       (data.secondary_intubation == 0)
 
         # Success B
-        idx_successB = (data.immediate_extubation == 0) &
-                        (data.secondary_intubation == 0) &
-                        (data.LOS_first_ventilation < 2) &
+        idx_successB = (data.immediate_extubation == 0) & \
+                        (data.secondary_intubation == 0) & \
+                        (data.LOS_first_ventilation < 2) & \
                         (data.Survival_days_27_10_2018 >= 2)
         data.loc[idx_successA | idx_successB, 'target'] = 1
 
@@ -62,7 +53,7 @@ class Dataset:
                   inplace=True,
                   axis=1)
 
-        return self._sample_data(data)
+        return self._split_data(data)
 
     def get_dynamic(self):
 
@@ -74,28 +65,25 @@ class Dataset:
 
         # Filter result based on static set
 
-        selector = self.get_static()['id_patient']
-        df = df[df.id_patient.isin(selector)]
+        train, test = self.get_static()
+        train_dynamic = df[df.id_patient.isin(train['id_patient'])]
+        test_dynamic = df[df.id_patient.isin(test['id_patient'])]
 
-        return df
+        return train_dynamic, test_dynamic
 
-    def _sample_data(self, df):
-        if not self.test and not self.train:
-            return df
+    def _split_data(self, df):
 
         train_df, test_df = train_test_split(df,
                                              test_size=0.3,
                                              random_state=self._random_state)
 
-        if self.train:
-            return train_df
+        test_df = self._drop_target_column(test_df)
 
-        if self.test:
-            return self._drop_target_column(test_df)
+        return train_df, test_df
 
     def _drop_target_column(self, df):
         return df.drop(['target'], axis=1)
 
-    def _truncate_datetime(self, df, offset):
+    def _truncate_datetime(self, df):
         date_max = df.time.max() - timedelta(minutes=self.time_offset)
         return df[df.time <= date_max]
