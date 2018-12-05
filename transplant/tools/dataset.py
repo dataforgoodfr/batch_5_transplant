@@ -1,10 +1,12 @@
 import pandas as pd
 import numpy as np
 import datetime
+from datetime import timedelta
 from sklearn.model_selection import train_test_split
 
 from transplant.config import (PATH_STATIC_CLEAN, PATH_DYNAMIC_CLEAN,
-STATIC_CATEGORIES, DYNAMIC_CATEGORIES, DYNAMIC_HEADERS)
+                               STATIC_CATEGORIES, DYNAMIC_CATEGORIES,
+                               DYNAMIC_HEADERS)
 
 
 class Dataset:
@@ -66,20 +68,9 @@ class Dataset:
 
         df = pd.read_csv(PATH_DYNAMIC_CLEAN, parse_dates=['time'])
 
-
         # Truncate dynamic file to time_offset before end of operation
 
-        tmp_offset = df[['id_patient', 'time']].groupby('id_patient') \
-                                               .agg(['max']) \
-                                               .reset_index()
-        tmp_offset.columns = tmp_offset.columns.droplevel(1)
-        tmp_offset['offset_time'] = \
-            tmp_offset.time - datetime.timedelta(minutes=self.time_offset)
-
-        df = pd.merge(df, tmp_offset[['id_patient', 'offset_time']],
-                      on='id_patient')
-        df = df[df['time'] < df['offset_time']]
-        df.drop(['offset_time'], inplace=True, axis=1)
+        df = df.groupby('id_patient').apply(self._truncate_datetime)
 
         # Filter result based on static set
 
@@ -127,3 +118,7 @@ class Dataset:
 
     def _drop_target_column(self, df):
         return df.drop(['target'], axis=1)
+
+    def _truncate_datetime(self, df, offset):
+        date_max = df.time.max() - timedelta(minutes=self.time_offset)
+        return df[df.time <= date_max]
