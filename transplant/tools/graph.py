@@ -88,3 +88,68 @@ def plot_dynamic_features(df, id_patient, features_list):
     fig = dict(data=data_graph, layout=layout)
     iplot(fig)
 
+def plot_compare_patient(df, feature_to_analyse, patient_list):
+    """
+    Plot a dynamic graph to compare patient on One feature
+    Work only in notebook.
+    Display only numerical features
+    
+    Input : 
+        - df [DataFrame] : Muse have features [['id_patient']]
+        - feature_to_analyse [string] : Name of numerical feature
+        - patient_list [list] : list of patient you want to compare
+        
+    Ouput : 
+        - Display a plotly graph
+    """
+    
+    init_notebook_mode(connected=True)
+    
+    # Check params
+    
+    if not isinstance(feature_to_analyse, str):
+        raise Exception("""feature_to_analyse muse be a string - Example 'ETCO2' """)
+        
+    if feature_to_analyse not in df.columns:
+        raise Exception("""feature_to_analyse is not in the DataFrame""")
+        
+    if not is_numeric_dtype(df[feature_to_analyse]):
+        raise Exception("""feature_to_analyse must be numeric""")
+    
+    if not isinstance(patient_list, list):
+        raise Exception("""'patient_list' must be a list - Example [304, 305, 405]""")
+    
+    
+    data = df[df['id_patient'].isin(patient_list)]
+    
+    if len(data) ==0:
+        raise Exception("""No data for these patients""")
+    
+    # Init list of trace
+    data_graph = []
+    
+    for patient in patient_list:
+        data_temp = data[data['id_patient'] == patient].copy()
+        if len(data_temp) == 0:
+            pass
+        
+        trace = go.Scatter(x=data_temp.reset_index(drop=True).index,
+                            y=data_temp[feature_to_analyse].values,
+                            name = str(patient),
+                            yaxis='y1')
+        data_graph.append(trace)
+    # Design graph
+    layout = dict(
+        title='Comparaison de patient sur la mesure ' + feature_to_analyse,
+        xaxis=dict(
+            rangeslider=dict(
+                visible = True
+            ),
+        ),
+        yaxis=dict(
+        title='Mesure'
+        )
+    )
+
+    fig = dict(data=data_graph, layout=layout)
+    iplot(fig)
