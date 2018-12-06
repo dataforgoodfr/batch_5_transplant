@@ -9,7 +9,17 @@ from plotly.offline import init_notebook_mode, iplot
 
 def plot_dynmatic_features(df, id_patient, features_list):
     """
+    Plot a dynamic graph of patient from medical measuring instrument.
+    Work only in notebook.
+    Display only numerical features
     
+    Input : 
+        - df [DataFrame] : Muse have features [['id_patient', 'time']]
+        - id_patient [int] : Id patient
+        - features_list [list] : list of features you want to analyse
+        
+    Ouput : 
+        - Display a plotly graph
     """
     
     init_notebook_mode(connected=True)
