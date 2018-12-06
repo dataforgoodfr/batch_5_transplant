@@ -6,3 +6,4 @@ tqdm
 pip
 jupyter
 cython
+plotly
