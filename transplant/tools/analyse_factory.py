@@ -4,18 +4,18 @@ import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-
+from sklearn.cluster import KMeans
 
 def analyse_feature_by_patient(df, feature):
     """
     Create a DataFrame groupby on id_patient.
 
     Aggregate feature on min / max / mean / median / std/ var / skew / 25 percent
-    					 75 percent / 95 percent
+    75 percent / 95 percent
 
     Input : 
-    	- df [DataFrame]
-    	- featute [string] - feature name
+      - df [DataFrame]
+      - featute [string] - feature name
     """
     data = df.groupby('id_patient', as_index=False)[feature].agg({'min': 'min',
                                                               'max' : 'max',
@@ -56,27 +56,44 @@ def create_pca_feature(feature_analysis):
     scaler = StandardScaler()
     X_scale = scaler.fit_transform(X)
     
-    pca = PCA(n_components=2)
+    pca = PCA(n_components=0.9)
     X_pca = pca.fit_transform(X_scale)
 
     feature_analysis['pca_1'] = X_pca[:,0]
     feature_analysis['pca_2'] = X_pca[:,1]
     
-    return feature_analysis, pca
+    return feature_analysis, pca, X_pca
 
 
-def analyse_factory(df, feature):
-	"""
-	Call analyse_feature_by_patient & create_pca_feature
+def create_cluster(feature_analysis, X_pca):
+    """
 
-	Input : 
-		- df [DataFrame]
-		- featute [string] - feature name
-	Ouput : 
-		- feature_analysis [DataFrame]
+    """
+
+    kmean = KMeans(n_clusters=3, random_state=2018)
+    kmean.fit(X_pca)
+
+    feature_analysis['cluster'] = kmean.labels_
+    return feature_analysis, kmean
+
+
+def analyse_factory(df, feature, cluster=False):
+    """
+	  Call analyse_feature_by_patient & create_pca_feature
+
+	   Input : 
+		   - df [DataFrame]
+		    - featute [string] - feature name
+        - cluster [Bool] - Create cluster
+	   Ouput : 
+		    - feature_analysis [DataFrame]
   		- pca (fit PCA)
-	"""
+	 """
+    feature_analysis = analyse_feature_by_patient(df, feature)
+    feature_analysis, pca, X_pca = create_pca_feature(feature_analysis)
+    if cluster==True:
+        feature_analysis, kmean = create_cluster(feature_analysis, X_pca)
+        return feature_analysis, pca, X_pca, kmean
+    else:
+      return feature_analysis, pca, X_pca
 
-	feature_analysis = analyse_feature_by_patient(df, feature)
-	feature_analysis, pca = create_pca_feature(feature_analysis)
-	return feature_analysis, pca
