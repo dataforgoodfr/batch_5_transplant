@@ -77,7 +77,7 @@ class Dataset:
                                              test_size=0.3,
                                              random_state=self._random_state)
 
-        test_df = self._drop_target_column(test_df)
+        #test_df = self._drop_target_column(test_df)
 
         return train_df, test_df
 
