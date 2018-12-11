@@ -26,15 +26,15 @@ Le succès de la chirurgie dépend de facteurs liés au receveur, au greffon et 
 │
 ├── docs               <- Documentation
 │
-├── models             <- Trained and serialized models, model predictions, or model summaries. (in .gitignore)
-│
+├── models             <- Trained and serialized models, model predictions,
+│                         or model summaries. (in .gitignore)
 ├── notebooks          <- Jupyter notebooks.
 │
 ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
 │   └── figures        <- Generated graphics and figures to be used in reporting
 │
 ├── transplant         <- Source code for use in this project.
-│   ├── data           <- Scripts to generate and get data
+│   ├── data           <- Scripts to generate and get data (dataset.py class for instance)
 │   │
 │   ├── features       <- Scripts to turn raw data into features for modeling
 │   │
@@ -43,7 +43,7 @@ Le succès de la chirurgie dépend de facteurs liés au receveur, au greffon et 
 │   │
 │   ├── tests          <- Unittests for this project
 │   │
-│   └── visualization  <- Scripts to create exploratory and results oriented visualizations
+│   └── visualization  <- Scripts to create exploratory/results oriented visualizations
 │
 ├── README.md          <- The top-level README for developers using this project.
 ├── requirements.txt   <- The requirements file for reproducing the analysis environment
