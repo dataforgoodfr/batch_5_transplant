@@ -149,10 +149,10 @@ class Dataset:
         X_train=np.array(train_glob.drop(['target'], axis=1))
         X_test=np.array(test_glob.drop(['target'], axis=1))
 
-        y_train_cls=np.array(train_glob['target'])
+        y_train_cls=np.array(train_glob['target']).reshape(-1,1)
         y_train_hot=np.array(list(train_glob['target'].map(dic_to_One_Hot)))
 
-        y_test_cls=np.array(test_glob['target'])
+        y_test_cls=np.array(test_glob['target']).reshape(-1,1)
         y_test_hot=np.array(list(test_glob['target'].map(dic_to_One_Hot)))
         
         
