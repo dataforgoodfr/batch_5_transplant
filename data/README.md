@@ -41,7 +41,7 @@ Les catégories sont les suivantes :
 
 #### Pour générer les clean à partir des données brutes
 ```
-python scripts/build_clean_from_raw_data.py
+python transplant/data/build_clean_from_raw_data.py
 ```
 
 #### Pour importer les données statiques et dynamiques
