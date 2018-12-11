@@ -157,10 +157,10 @@ class Dataset:
         
         #Return
         if target_format=="cls" :
-            return X_train,X_test, y_train_cls , y_train_cls , y_test_cls
+            return X_train, X_test, y_train_cls , y_test_cls 
         
         if target_format=="One_Hot" :
-            return X_train,X_test, y_train_cls , y_train_cls , y_test_cls
+            return X_train,X_test,y_train_hot , y_test_hot
 
         print("Static merged with Flattent Dynamic, you can chose between One_Hot encoding ([0,1] , [1,0]) for target data or not.")
     
