@@ -74,6 +74,7 @@ class Dataset:
     def _split_data(self, df):
 
         train_df, test_df = train_test_split(df,
+                                             stratify=df['target'],
                                              test_size=0.3,
                                              random_state=self._random_state)
 
