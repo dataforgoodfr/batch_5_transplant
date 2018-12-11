@@ -1,5 +1,5 @@
 import unittest
-from transplant.tools.dataset import Dataset
+from transplant.data.dataset import Dataset
 
 
 class DatasetTest(unittest.TestCase):
@@ -36,4 +36,3 @@ class DatasetTest(unittest.TestCase):
             "target" not in self.test_static_df,
             "Test df should have no 'target' column"
         )
-
