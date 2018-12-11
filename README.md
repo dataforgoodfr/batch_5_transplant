@@ -21,12 +21,17 @@ Le succès de la chirurgie dépend de facteurs liés au receveur, au greffon et 
 ## Organisation du Repository
 ```
 ├── data
-│   ├── clean          <- The final, canonical data sets for modeling.
+│   ├── clean          <- The final, canonical data sets for modeling. (in .gitignore)
 │   └── raw            <- The original, immutable data dump.
 │
 ├── docs               <- Documentation
 │
+├── models             <- Trained and serialized models, model predictions, or model summaries. (in .gitignore)
+│
 ├── notebooks          <- Jupyter notebooks.
+│
+├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
+│   └── figures        <- Generated graphics and figures to be used in reporting
 │
 ├── transplant         <- Source code for use in this project.
 │   ├── data           <- Scripts to generate and get data
@@ -41,8 +46,7 @@ Le succès de la chirurgie dépend de facteurs liés au receveur, au greffon et 
 │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
 │
 ├── README.md          <- The top-level README for developers using this project.
-├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-│                         generated with `pip freeze > requirements.txt`
+├── requirements.txt   <- The requirements file for reproducing the analysis environment
 └── setup.py           <- Make this project pip installable with `pip install -e`
 ```
 
