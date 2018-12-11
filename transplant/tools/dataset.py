@@ -155,12 +155,13 @@ class Dataset:
         y_test_cls=np.array(test_glob['target'])
         y_test_hot=np.array(list(test_glob['target'].map(dic_to_One_Hot)))
         
+        
         #Return
         if target_format=="cls" :
-            return X_train, X_test, y_train_cls , y_test_cls 
+            return X_train, X_test, y_train_cls , y_test_cls , train_glob.drop(['target'], axis=1).columns
         
         if target_format=="One_Hot" :
-            return X_train,X_test,y_train_hot , y_test_hot
+            return X_train,X_test,y_train_hot , y_test_hot , train_glob.drop(['target'], axis=1).columns
 
         print("Static merged with Flattent Dynamic, you can chose between One_Hot encoding ([0,1] , [1,0]) for target data or not.")
     
