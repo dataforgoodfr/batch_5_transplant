@@ -41,7 +41,7 @@ Les catégories sont les suivantes :
 
 #### Pour générer les clean à partir des données brutes
 ```
-python scripts/build_clean_data_from_raw.py
+python scripts/build_clean_from_raw_data.py
 ```
 
 #### Pour importer les données statiques et dynamiques
@@ -400,22 +400,22 @@ Ces dernières sont détaillées dans les sections qui suivent.
 
 <div id="target">
 
-#### Target variable 
+#### Target variable
 
-La variable target est définie comme le succès de l'operation que nous essayons de prédire. Nous distinguons les cas suivants: 
+La variable target est définie comme le succès de l'operation que nous essayons de prédire. Nous distinguons les cas suivants:
 
-- Succès A: le patient a été extubé immédiatement à la fin du bloc opératoire et n'a pas été réintubé par la suite. Cela correspond à l'opérateur logique: 
+- Succès A: le patient a été extubé immédiatement à la fin du bloc opératoire et n'a pas été réintubé par la suite. Cela correspond à l'opérateur logique:
 
 ```
 Immediate_extubation = 1 AND secondary_intubation = 0
 ```
 
-Succes B: Le patient n'a pas été extubé immédiatement à la fin du bloc opératoire, n'a pas été réintubé par la suite et est resté moins de 48h sous assistance, durée pendant laquelle il n'est pas décédé. Cette condition correspond à l'opérateur logique: 
+Succes B: Le patient n'a pas été extubé immédiatement à la fin du bloc opératoire, n'a pas été réintubé par la suite et est resté moins de 48h sous assistance, durée pendant laquelle il n'est pas décédé. Cette condition correspond à l'opérateur logique:
 
 ```
-Immediate_extubation = 0 AND secondary_intubation = 0 AND LOS_first_ventilation < 2 AND Survival_days >= 2 
+Immediate_extubation = 0 AND secondary_intubation = 0 AND LOS_first_ventilation < 2 AND Survival_days >= 2
 ```
-- Echec: tous les autres cas. 
+- Echec: tous les autres cas.
 
 </div>
 

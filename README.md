@@ -17,6 +17,36 @@ Une opération de transplantation se fait en plusieurs phases:
 
 Le succès de la chirurgie dépend de facteurs liés au receveur, au greffon et à différents évènements per opératoires. C’est l’analyse de ces différents paramètres qui pourrait permettre d’optimiser la prise en charge et la décision du sevrage ventilatoire en fin d’intervention
 
+
+## Organisation du Repository
+```
+├── data
+│   ├── clean          <- The final, canonical data sets for modeling.
+│   └── raw            <- The original, immutable data dump.
+│
+├── docs               <- Documentation
+│
+├── notebooks          <- Jupyter notebooks.
+│
+├── transplant         <- Source code for use in this project.
+│   ├── data           <- Scripts to generate and get data
+│   │
+│   ├── features       <- Scripts to turn raw data into features for modeling
+│   │
+│   ├── models         <- Scripts to train models and then use trained models to make
+│   │                     predictions
+│   │
+│   ├── tests          <- Unittests for this project
+│   │
+│   └── visualization  <- Scripts to create exploratory and results oriented visualizations
+│
+├── README.md          <- The top-level README for developers using this project.
+├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
+│                         generated with `pip freeze > requirements.txt`
+└── setup.py           <- Make this project pip installable with `pip install -e`
+```
+
+
 ## Dataset
 
 L'hôpital Foch met à disposition un historique de 412 patients ayant reçu une transplantation pulmonaire depuis Janvier 2012. Le dataset contient:
@@ -71,7 +101,7 @@ Pour en savoir plus sur les environnements et les `PYTHONPATH` voir [ce lien pou
 Vous pouvez desormais importer depuis un notebook les classes utiles au traitement de données avec la commande:
 
 ```
-from transplant.tools.dataset import Dataset
+from transplant.data.dataset import Dataset
 ```
 
 ## FAQ
