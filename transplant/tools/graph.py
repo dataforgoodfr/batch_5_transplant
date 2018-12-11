@@ -153,3 +153,59 @@ def plot_compare_patient(df, feature_to_analyse, patient_list):
 
     fig = dict(data=data_graph, layout=layout)
     iplot(fig)
+
+def plot_analyse_factory(df, pca, hue=False):
+    """
+    Plotting result from tools.analyse_factory.analyse_factory()
+
+    Input : 
+        - df [DataFrame] : Muse have features [['id_patient']]
+        - pca [sklearn.decomposition.PCA] : PCA already fit
+        - hue [Bool] : Using cluster to plot differents colors
+        
+    Ouput : 
+        - Display a plotly graph
+    """
+    
+    init_notebook_mode(connected=True)
+    
+    pca_expl = round(pca.explained_variance_ratio_[0:2].sum(), 2)
+    
+    if hue == False:
+        # Create a trace
+        trace = go.Scatter(
+            x = df['pca_1'].values,
+            y = df['pca_2'].values,
+            mode = 'markers',
+            text=df["id_patient"].tolist()
+        )
+
+        data = [trace]
+    else:
+        data = []
+        for cluster in sorted(df['cluster'].unique()):
+            df_temp = df[df['cluster'] == cluster]
+            trace = go.Scatter(x = df_temp['pca_1'].values,
+                                y = df_temp['pca_2'].values,
+                                mode = 'markers',
+                                marker=dict(color=color_list[cluster]),
+                                name = 'cluster_'+str(cluster),
+                                text=df_temp["id_patient"].tolist()
+                              )
+            data.append(trace) 
+    
+    # Design graph
+    layout = dict(
+        title='Analyse de feature PCA explain (first 2 components) : ' + str(pca_expl),
+        height=400,
+        #colorscale='Set3',
+        xaxis=dict(
+            title='pca_1'
+        ),
+        yaxis=dict(
+            title='pca_2'
+        )
+    )
+    
+    fig = dict(data=data, layout=layout)
+    iplot(fig)
