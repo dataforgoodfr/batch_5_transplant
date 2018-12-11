@@ -1,8 +1,6 @@
-pandas
-scikit-learn
-nb_conda
-xlrd
-tqdm
-pip
-jupyter
-cython
+# local package
+-e .
+
+# external requirements
+numpy==1.15.4
+pandas==0.23.4

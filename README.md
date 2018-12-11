@@ -27,18 +27,30 @@ L'hôpital Foch met à disposition un historique de 412 patients ayant reçu une
 - Marqueurs temporels collectés manuellement lors de la transplantation.
 
 ## Setup
+Il faut tout d'abord cloner le repo dans un dossier avec :
+```
+git clone git@github.com:dataforgoodfr/batch_5_transplant.git
+```
 
-- Cloner le repo dans un dossier avec `git clone git@github.com:dataforgoodfr/batch_5_transplant.git`
-- Ajoutez le repo au sein de votre `PYTHONPATH`. 
+Ensuite, il y a deux methodes possibles pour setup le projet :
 
+#### 1ère methode : avec pip install
+Placez vous dans le dossier racine du repo (`batch_5_transplant/`), et exécuter la commande suivante pour installer le package transplant :
+```
+pip install -e .
+```
+
+#### 2ème méthode : avec le PYTHONPATH
+Ajoutez le repo au sein de votre `PYTHONPATH`.
+
+**Pour Mac** :
 Voici un exemple pour Mac, où le repo a été cloné au sein du dossier `~/Documents`:
-
 ```
 open ~/.bashrc
 export PYTHONPATH="/Users/username/Documents/batch_5_transplant:$PYTHONPATH"
 ```
 
-Pour Windows :
+**Pour Windows** :
 
 Rendez-vous dans 'Paramètres système avancés' puis dans “Variables d’environnement…”.
 Il faut créer une nouvelle variable système ici :
@@ -49,12 +61,14 @@ Et remplir la fenêtre de la manière suivante en remplaçant le texte dans ‘V
 
 ![pythonpath_windows2](docs/images/pythonpath_windows2.bmp)
 
-Et voilà ! 
+Et voilà !
 N’oubliez pas de rouvrir votre jupyter. (Pour vérifier si la nouvelle variable est bien active écrivez ‘ ! set ‘ dans une cellule jupyter pour visualiser toutes les variables systèmes actives.
 
 
 Pour en savoir plus sur les environnements et les `PYTHONPATH` voir [ce lien pour MAC](https://stackoverflow.com/questions/3387695/add-to-python-path-mac-os-x/3387737) ou ce [lien pour Windows](http://sametmax.com/ajouter-un-chemin-a-la-variable-denvironnement-path-sous-windows/)
-- Vous pouvez desormais importer depuis un notebook les classes utiles au traitement de données avec la commande:
+
+#### Vérifier l'installation
+Vous pouvez desormais importer depuis un notebook les classes utiles au traitement de données avec la commande:
 
 ```
 from transplant.tools.dataset import Dataset
