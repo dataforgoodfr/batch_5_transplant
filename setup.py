@@ -1,11 +1,12 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
-setup(name='scripts',
-      version='0.1',
-      description='data engineering scripts for Transplant',
-      url='https://github.com/dataforgoodfr/batch_5_transplant/',
-      author='Yanni',
-      author_email='yannib.iyeze@gmail.com',
-      license='Data for good',
-      packages=['scripts'],
-      zip_safe=False)
+setup(
+    name='transplant',
+    packages=find_packages(),
+    version='0.1.0',
+    description="Small package to anonymise and format data "
+                "from the Hôpital Foch database.",
+    url="https://github.com/dataforgoodfr/batch_5_transplant",
+    author='dataforgoodfr',
+    license='MIT',
+)
