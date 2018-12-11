@@ -89,9 +89,11 @@ class Dataset:
         return df[df.time <= date_max]
 
     
-    def get_data_pierre(self, target_format="cls"):
-        # see notebook called "Data Preparation Once and for All"
-        
+    def get_data_merged_dynamic_flatten(self, target_format="cls", centered_reduced=False):
+        # To have more explanation about this preparation see the notebook called "Data Preparation for our studies"
+        print("Static merged with Flattent Dynamic (i.e. : took the mean for each time serie).")
+        print("You can chose between One_Hot encoding ([0,1] , [1,0]) with 'One_Hot' for target data or not with 'cls'.")
+        print("You can chose to center and reduce your data with the train set data with 'True'")
         
         from transplant.tools.dataset import Dataset 
         dataset = Dataset()
@@ -143,17 +145,39 @@ class Dataset:
         def merge_dyn_sta(X_train_static,X_train_dynamic,X_test_static,X_test_dynamic):
             return pd.merge(X_train_static, X_train_dynamic, on='id_patient') , pd.merge(X_test_static, X_test_dynamic, on='id_patient') 
         train_glob, test_glob = merge_dyn_sta(train_static,train_dynamic_flat,test_static,test_dynamic_flat)
-    
-        dic_to_One_Hot = {0 : [1,0], 1 : [0,1]}
-    
-        X_train=np.array(train_glob.drop(['target'], axis=1))
-        X_test=np.array(test_glob.drop(['target'], axis=1))
+        
+        
+        #Centering and Reducing if needed
+        
+        def center_reduce_data(W_train,W_test):
+            mean_train=W_train.mean()
+            std_train=W_test.std()
 
-        y_train_cls=np.array(train_glob['target']).reshape(-1,1)
+            return (W_train-mean_train)/std_train, (W_test-mean_train)/std_train
+        
+        dic_to_One_Hot = {0 : [1,0], 1 : [0,1]}
+        
+        y_train_cls=np.array(train_glob['target'])
         y_train_hot=np.array(list(train_glob['target'].map(dic_to_One_Hot)))
 
-        y_test_cls=np.array(test_glob['target']).reshape(-1,1)
+        y_test_cls=np.array(test_glob['target'])
         y_test_hot=np.array(list(test_glob['target'].map(dic_to_One_Hot)))
+    
+        
+        if centered_reduced :
+            X_train,X_test = center_reduce_data(train_glob.drop(['target'], axis=1),test_glob.drop(['target'], axis=1))
+            
+            X_train=np.array(X_train)
+            X_test=np.array(X_test)
+            
+    
+        else :
+            X_train=np.array(train_glob.drop(['target'], axis=1))
+            X_test=np.array(test_glob.drop(['target'], axis=1))
+
+        
+        
+            
         
         
         #Return
@@ -163,6 +187,6 @@ class Dataset:
         if target_format=="One_Hot" :
             return X_train,X_test,y_train_hot , y_test_hot , train_glob.drop(['target'], axis=1).columns
 
-        print("Static merged with Flattent Dynamic, you can chose between One_Hot encoding ([0,1] , [1,0]) for target data or not.")
+        
     
     
