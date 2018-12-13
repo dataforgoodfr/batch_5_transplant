@@ -1,4 +1,6 @@
 import os
+import re
+import sys
 import glob
 from datetime import datetime, timedelta
 import numpy as np
@@ -96,11 +98,20 @@ def correct_date_shift(x):
 
 # Static variables methods
 #######################################
-def load_static_raw(path_static_raw):
+def load_static_raw(dir_static_raw):
     '''Load raw files into one single DataFrame'''
-    path_static_raw = glob.glob(os.path.join(path_static_raw, '*.xlsx'))
-    assert len(path_static_raw) == 1, '%d file found in %s instead of 1'\
-        % (len(path_static_raw), path_static_raw)
+    path_static_raw = glob.glob(os.path.join(dir_static_raw, '*.xlsx'))
+    # Let's remove excel temporary lock files
+    pattern = r"(\.~lock|~\$)+.*"
+    path_static_raw = [p for p in path_static_raw
+                       if not re.match(pattern, os.path.basename(p))]
+    # Check that there is only one file
+    if len(path_static_raw) != 1:
+        files = [os.path.basename(p) for p in path_static_raw]
+        print("\nERROR: this script only supports 1 excel file, but %d file"
+              "(s) were found in %s: %s"
+              % (len(path_static_raw), dir_static_raw, files))
+        sys.exit(1)
 
     df = pd.read_excel(path_static_raw[0], sheet_name='ensemble')
     return df
