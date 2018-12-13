@@ -93,4 +93,4 @@ venv.bak/
 
 # Repo
 /models/
-/data/clean/
+# /data/clean/*
