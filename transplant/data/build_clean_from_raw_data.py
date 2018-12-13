@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 from transplant.config import PATH_DYNAMIC_RAW, PATH_DYNAMIC_CLEAN,\
-    PATH_STATIC_RAW, PATH_STATIC_CLEAN
+    PATH_STATIC_RAW, PATH_STATIC_CLEAN, DYNAMIC_HEADERS
 
 
 PATIENT_TO_DROP = [
@@ -21,14 +21,42 @@ def load_dynamic_raw(path_dynamic_raw):
     assert(len(paths_dynamic_raw)) > 0,\
         'No files found in %s' % path_dynamic_raw
     for path in sorted(paths_dynamic_raw):
-        dfs.append(pd.read_excel(path, skiprows=[2]))
-    return pd.concat(dfs, sort=True)
+        df = pd.read_excel(path, header=None)       # header=None is crucial...
+        dfs += split_dynamic_raw_multiple_blocs(df)  # ...for this method
+    return pd.concat(dfs, axis=0, ignore_index=True, sort=True)
+
+
+def split_dynamic_raw_multiple_blocs(df):
+    """Split multiple data blocs of a raw Bloc*D4G.xls file loaded
+    into a dataframe.
+
+    If you look carefully, you can see that many Bloc*D4G.xls files have
+    multiple header rows inside the file followed by new blocs of data...
+    ...and the terrible thing is that sometimes the new header is not
+    even aligned with the other ones...
+
+    This method simply splits the dataframe into new dataframes with
+    proper headers.
+    """
+    # Detect dynamic header indexes
+    # We assume that the header rows have at least 5 dynamic headers.
+    header_idx = df[df.isin(DYNAMIC_HEADERS).sum(axis=1) > 5].index
+    header_idx = list(header_idx) + [len(df)]  # Add last index
+
+    # For each data bloc, extract "df_split" and update its columns
+    # with the correct headers
+    dfs = []
+    for i in range(len(header_idx) - 1):
+        df_s = df.loc[header_idx[i]: header_idx[i + 1] - 1].copy()
+        df_s.columns = ['id_patient', 'time'] + df_s.iloc[0].tolist()[2:]
+        df_s = df_s.loc[:, ~df_s.columns.isna()]  # Remove other NaN columns
+        dfs.append(df_s.reset_index(drop=True))
+    return dfs
 
 
 def clean_dynamic_raw(df, df_static):
     '''Clean dynamic raw DataFrame'''
     # Rename some columns
-    df = df.rename(columns={'Unnamed: 0': 'id_patient', 'Unnamed: 1': 'time'})
     df.columns = [c.strip() for c in df.columns]   # trim spaces
 
     # Change column order: put [id_patient, time] at first
@@ -37,7 +65,7 @@ def clean_dynamic_raw(df, df_static):
     # Drop corrupted or useless data
     col_to_drop = [col for col in df.columns if col.startswith('Unnamed:')]
     df = df.drop(columns=col_to_drop)
-    df = df.dropna(subset=['id_patient'])  # drop rows with nan in id_patient
+    df = df.dropna(subset=['id_patient', 'time'])
     df = df[~df.id_patient.isin(PATIENT_TO_DROP)]
 
     # Format dtypes
@@ -51,6 +79,10 @@ def clean_dynamic_raw(df, df_static):
         df['date_transplantation'].dt.strftime('%Y-%m-%d') + ' ' + df['time'])
     df = df.groupby('id_patient').apply(correct_date_shift)
     df = df.drop(columns=['date_transplantation'])
+
+    # Checks
+    assert (df.id_patient.dtypes == 'int'),\
+        "TypeError: Inconsistency in parsed dynamic data: id_patient not int"
 
     return df
 
