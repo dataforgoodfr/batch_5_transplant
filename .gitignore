@@ -88,5 +88,9 @@ venv.bak/
 .DS_store
 .idea/
 
+# Temporary excel files with ubuntu
+.~lock.*
+
 # Repo
 /models/
+/data/clean/
