@@ -2,7 +2,9 @@ import os
 import re
 import sys
 import glob
+import hashlib
 from datetime import datetime, timedelta
+
 import numpy as np
 import pandas as pd
 from transplant.config import PATH_DYNAMIC_RAW, PATH_DYNAMIC_CLEAN,\
@@ -149,6 +151,22 @@ def cast_integers(df):
         except (ValueError, TypeError):
             pass
     return df
+
+
+def get_hash_raw_and_build_clean():
+    """ Get the md5sum of all the raw files + the current python
+    file (__file__)."""
+    # Get paths
+    dir_raws = os.path.realpath(os.path.join(PATH_STATIC_RAW, '../'))
+    paths_raws = glob.glob(os.path.join(dir_raws, '*/*'))
+    paths_files_to_hash = paths_raws + [os.path.realpath(__file__)]
+
+    # Hash!
+    md5 = hashlib.md5()
+    for path in paths_files_to_hash:
+        with open(path, 'rb') as f:
+            md5.update(f.read())
+    return md5.hexdigest()
 
 
 # Script
