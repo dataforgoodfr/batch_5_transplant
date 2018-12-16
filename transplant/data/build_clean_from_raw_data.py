@@ -43,13 +43,22 @@ def split_dynamic_raw_multiple_blocs(df):
     proper headers.
     """
     # Detect dynamic header indexes
-    # We assume that the header rows have at least 5 dynamic headers.
-    header_idx = df[df.isin(DYNAMIC_HEADERS).sum(axis=1) > 5].index
-    header_idx = list(header_idx) + [len(df)]  # Add last index
+    header_idx = df[df.isin(DYNAMIC_HEADERS).sum(axis=1) >= 1].index
+    # Check: we ensure that it is exactly the same thing to detect the headers
+    # looking for at least 1 or 6 DYNAMIC_HEADERS in a row. We choose 6 because
+    # the header row with the minimum number of DYNAMIC_HEADERS was found in
+    # Bloc8D4G.xls and has 6 headers. If the check fails, a false positive
+    # might have been detected (ex: text cell with a DYNAMIC_HEADERS).
+    header_idx_6 = df[df.isin(DYNAMIC_HEADERS).sum(axis=1) >= 6].index
+    assert header_idx_6.equals(header_idx),\
+        "[split_dynamic_raw_multiple_blocs] Failed to detect headers"
+    # Add last index
+    header_idx = list(header_idx) + [len(df)]
 
     # For each data bloc, extract "df_split" and update its columns
     # with the correct headers
     dfs = []
+
     for i in range(len(header_idx) - 1):
         df_s = df.loc[header_idx[i]: header_idx[i + 1] - 1].copy()
         df_s.columns = ['id_patient', 'time'] + df_s.iloc[0].tolist()[2:]
