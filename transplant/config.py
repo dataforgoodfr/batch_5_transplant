@@ -9,11 +9,17 @@ PATH_STATIC_CLEAN = ROOT_DIR + '/data/clean/static.csv'
 PATH_DOCS = ROOT_DIR + '/data/clean/variables_documentation.csv'
 PATH_DYNAMIC_NORMS = ROOT_DIR + '/data/norms/features_norm.json'
 
+# Raw file patterns
+PATTERNS_RAW = {
+    "dynamic": "Bloc*.xls",
+    "static": "base LgTx*.xlsx"
+}
+
 # Dynamic Headers
 DYNAMIC_HEADERS = [
     'id_patient', 'time', 'B.I.S', 'BIS SR', 'DC', 'ET Des.', 'ET Sevo.',
     'ETCO2', 'ETCO2 (mmHg)', 'ETO2', 'FC', 'FICO2', 'FICO2 (mmHg)', 'FIN2O',
-    'FR', 'FR(ecg)', 'FiO2', 'NMT TOF', 'NMTratio', 'PAPdia', 'PAPmoy',
+    'FR', 'FR(ecg)', 'MAC', 'FiO2', 'NMT TOF', 'NMTratio', 'PAPdia', 'PAPmoy',
     'PAPsys', 'PASd', 'PASm', 'PASs', 'PEEPtotal', 'PNId', 'PNIm', 'PNIs',
     'Pmax', 'Pmean', 'Pplat', 'RR(co2)', 'SpO2', 'SvO2 (m)', 'Temp', 'VT'
 ]

@@ -1,5 +1,4 @@
 import os
-import re
 import sys
 import glob
 import hashlib
@@ -8,7 +7,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 from transplant.config import PATH_DYNAMIC_RAW, PATH_DYNAMIC_CLEAN,\
-    PATH_STATIC_RAW, PATH_STATIC_CLEAN, DYNAMIC_HEADERS
+    PATH_STATIC_RAW, PATH_STATIC_CLEAN, DYNAMIC_HEADERS, PATTERNS_RAW
 
 
 PATIENT_TO_DROP = [
@@ -18,13 +17,14 @@ PATIENT_TO_DROP = [
 
 # Dynamic variables methods
 #######################################
-def load_dynamic_raw(path_dynamic_raw):
+def load_dynamic_raw(dir_raw, file_pattern):
     '''Load raw files into one single DataFrame'''
     dfs = []
-    paths_dynamic_raw = glob.glob(os.path.join(path_dynamic_raw, '*.xls'))
-    assert(len(paths_dynamic_raw)) > 0,\
-        'No files found in %s' % path_dynamic_raw
-    for path in sorted(paths_dynamic_raw):
+    paths_raw = sorted(glob.glob(os.path.join(dir_raw, file_pattern)))
+    if len(paths_raw) == 0:
+        raise FileNotFoundError('No files found in %s with file pattern %s'
+                                % (dir_raw, file_pattern))
+    for path in paths_raw:
         df = pd.read_excel(path, header=None)       # header=None is crucial...
         dfs += split_dynamic_raw_multiple_blocs(df)  # ...for this method
     return pd.concat(dfs, axis=0, ignore_index=True, sort=True)
@@ -109,22 +109,18 @@ def correct_date_shift(x):
 
 # Static variables methods
 #######################################
-def load_static_raw(dir_static_raw):
+def load_static_raw(dir_raw, file_pattern):
     '''Load raw files into one single DataFrame'''
-    path_static_raw = glob.glob(os.path.join(dir_static_raw, '*.xlsx'))
-    # Let's remove excel temporary lock files
-    pattern = r"(\.~lock|~\$)+.*"
-    path_static_raw = [p for p in path_static_raw
-                       if not re.match(pattern, os.path.basename(p))]
+    paths_raw = glob.glob(os.path.join(dir_raw, file_pattern))
     # Check that there is only one file
-    if len(path_static_raw) != 1:
-        files = [os.path.basename(p) for p in path_static_raw]
-        print("\nERROR: this script only supports 1 excel file, but %d file"
-              "(s) were found in %s: %s"
-              % (len(path_static_raw), dir_static_raw, files))
+    if len(paths_raw) != 1:
+        files = [os.path.basename(p) for p in paths_raw]
+        print("\nERROR: this script supports only 1 static file, but %d file"
+              "(s) were found in %s with file pattern %s: %s"
+              % (len(paths_raw), file_pattern, dir_raw, files))
         sys.exit(1)
 
-    df = pd.read_excel(path_static_raw[0], sheet_name='ensemble')
+    df = pd.read_excel(paths_raw[0], sheet_name='ensemble')
     return df
 
 
@@ -182,12 +178,12 @@ def get_hash_raw_and_build_clean():
 #######################################
 if __name__ == '__main__':
     print('Building clean csv for static data...')
-    df_static = load_static_raw(PATH_STATIC_RAW)
+    df_static = load_static_raw(PATH_STATIC_RAW, PATTERNS_RAW["static"])
     df_static = clean_static_raw(df_static)
     df_static.to_csv(PATH_STATIC_CLEAN, index=False)
 
     print('Building clean csv for dynamic data...')
-    df_dynamic = load_dynamic_raw(PATH_DYNAMIC_RAW)
+    df_dynamic = load_dynamic_raw(PATH_DYNAMIC_RAW, PATTERNS_RAW["dynamic"])
     df_dynamic = clean_dynamic_raw(df_dynamic, df_static)
     df_dynamic.to_csv(PATH_DYNAMIC_CLEAN, index=False)
 
