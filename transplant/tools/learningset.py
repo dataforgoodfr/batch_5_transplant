@@ -111,6 +111,69 @@ class Learningset:
 
         if target_format == "One_Hot":
             return X_train, X_test, y_train_hot, y_test_hot, train_glob.drop(['target'], axis=1).columns
+        
+
+    def get_data_merged_dynamic_flatten_desc(self, target_format="cls", centered_reduced=False):
+        
+     
+        from transplant.tools.learningset import Learningset
+        learningset = Learningset()
+
+        train_static,test_static = learningset.get_static_filled()
+
+        #Dynamic (flatten)
+        train_dynamic_0, test_dynamic_0 = dataset.get_dynamic()
+
+        mean_dynamic_train = train_dynamic_0.groupby(
+            ['id_patient']).mean().mean()
+
+        train_dynamic = train_dynamic_0.fillna(mean_dynamic_train)
+        test_dynamic = test_dynamic_0.fillna(mean_dynamic_train)
+
+        train_dynamic_flat = train_dynamic.groupby(
+            ['id_patient'], as_index=False).mean()
+        test_dynamic_flat = test_dynamic.groupby(
+            ['id_patient'], as_index=False).mean()
+
+        # Merging
+        def merge_dyn_sta(X_train_static, X_train_dynamic, X_test_static, X_test_dynamic):
+            return pd.merge(X_train_static, X_train_dynamic, on='id_patient'), pd.merge(X_test_static, X_test_dynamic, on='id_patient')
+        train_glob, test_glob = merge_dyn_sta(
+            train_static, train_dynamic_flat, test_static, test_dynamic_flat)
+
+        # Centering and Reducing if needed
+
+        def center_reduce_data(W_train, W_test):
+            mean_train = W_train.mean()
+            std_train = W_test.std()
+
+            return (W_train-mean_train)/std_train, (W_test-mean_train)/std_train
+
+        dic_to_One_Hot = {0: [1, 0], 1: [0, 1]}
+
+        y_train_cls = np.array(train_glob['target'])
+        y_train_hot = np.array(list(train_glob['target'].map(dic_to_One_Hot)))
+
+        y_test_cls = np.array(test_glob['target'])
+        y_test_hot = np.array(list(test_glob['target'].map(dic_to_One_Hot)))
+
+        if centered_reduced:
+            X_train, X_test = center_reduce_data(train_glob.drop(
+                ['target'], axis=1), test_glob.drop(['target'], axis=1))
+
+            X_train = np.array(X_train)
+            X_test = np.array(X_test)
+
+        else:
+            X_train = np.array(train_glob.drop(['target'], axis=1))
+            X_test = np.array(test_glob.drop(['target'], axis=1))
+
+        # Return
+        if target_format == "cls":
+            return X_train, X_test, y_train_cls, y_test_cls, train_glob.drop(['target'], axis=1).columns
+
+        if target_format == "One_Hot":
+            return X_train, X_test, y_train_hot, y_test_hot, train_glob.drop(['target'], axis=1).columns
 
 
 
