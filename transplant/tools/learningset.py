@@ -154,9 +154,7 @@ class Learningset:
             X_return['ends_operation_year']=X_return['ends_operation'].apply(lambda x: x.year)
             X_return['ends_operation_month']=X_return['ends_operation'].apply(lambda x: x.month)
             X_return['ends_operation_day']=X_return['ends_operation'].apply(lambda x: x.dayofyear)
-            
-            print(X_return['length_op'].iloc[0])
-            print(X_return['ends_operation'].iloc[0])
+ 
 
             return X_return.drop(['length_op','ends_operation','start_operation'], axis=1)
 
@@ -202,7 +200,7 @@ class Learningset:
         
         def center_reduce_data(W_train, W_test):
             mean_train = W_train.mean()
-            std_train = W_test.std()
+            std_train = W_test.std().replace(0,1)
 
             return (W_train-mean_train)/std_train, (W_test-mean_train)/std_train
 
