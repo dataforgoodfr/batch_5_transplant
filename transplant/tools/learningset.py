@@ -6,7 +6,7 @@ dataset=Dataset()
 
 class Learningset:
 
-
+## get_static_filled
     def get_static_filled(self):
         # Function that return the train and test set of the static data where :
         # - We transformed the string into numbers
@@ -43,7 +43,10 @@ class Learningset:
         test_static_filled = test_static_filled.drop(drop_test, axis=1)
 
         return train_static_filled, test_static_filled
+    
+    
 
+## get_data_merged_dynamic_flatten
 
     def get_data_merged_dynamic_flatten(self, target_format="cls", centered_reduced=False):
         # To have more explanation about this preparation see the notebook called "Data Preparation for our studies"
@@ -111,38 +114,92 @@ class Learningset:
 
         if target_format == "One_Hot":
             return X_train, X_test, y_train_hot, y_test_hot, train_glob.drop(['target'], axis=1).columns
-        
 
-    def get_data_merged_dynamic_flatten_desc(self, target_format="cls", centered_reduced=False):
+## get_data_merged_dynamic_flatten_full
+
+    def get_data_merged_dynamic_flatten_full(self, target_format="cls", centered_reduced=False):
         
-     
         from transplant.tools.learningset import Learningset
         learningset = Learningset()
 
-        train_static,test_static = learningset.get_static_filled()
+        train_static_0, test_static_0 = learningset.get_static_filled()
 
-        #Dynamic (flatten)
         train_dynamic_0, test_dynamic_0 = dataset.get_dynamic()
+        
+        train_dynamic_0 = train_dynamic_0.fillna(0)
+        test_dynamic_0 = test_dynamic_0.fillna(0)
+        
+        def add_start_end_length_op_to_static(X_stat, X_dyn):
+            grouped_time = X_dyn.groupby(['id_patient'])['time']
 
-        mean_dynamic_train = train_dynamic_0.groupby(
-            ['id_patient']).mean().mean()
+            time_start_df = grouped_time.first().to_frame()
+            time_start_df.columns = ['start_operation']
+            time_start_df['id_patient'] = time_start_df.index
 
-        train_dynamic = train_dynamic_0.fillna(mean_dynamic_train)
-        test_dynamic = test_dynamic_0.fillna(mean_dynamic_train)
+            X_return = pd.merge(X_stat, time_start_df, on='id_patient')
 
-        train_dynamic_flat = train_dynamic.groupby(
-            ['id_patient'], as_index=False).mean()
-        test_dynamic_flat = test_dynamic.groupby(
-            ['id_patient'], as_index=False).mean()
+            time_ends_df = grouped_time.last().to_frame()
+            time_ends_df.columns = ['ends_operation']
+            time_ends_df['id_patient'] = time_ends_df.index
 
-        # Merging
+            X_return = pd.merge(X_return, time_ends_df, on='id_patient')
+
+            X_return['length_op'] = (X_return['ends_operation'] - X_return['start_operation']).apply(lambda x: x.seconds//60)
+            
+            X_return['start_operation_year']=X_return['start_operation'].apply(lambda x: x.year)
+            X_return['start_operation_month']=X_return['start_operation'].apply(lambda x: x.month)
+            X_return['start_operation_day']=X_return['start_operation'].apply(lambda x: x.dayofyear)
+            
+            
+            X_return['ends_operation_year']=X_return['ends_operation'].apply(lambda x: x.year)
+            X_return['ends_operation_month']=X_return['ends_operation'].apply(lambda x: x.month)
+            X_return['ends_operation_day']=X_return['ends_operation'].apply(lambda x: x.dayofyear)
+            
+            print(X_return['length_op'].iloc[0])
+            print(X_return['ends_operation'].iloc[0])
+
+            return X_return.drop(['length_op','ends_operation','start_operation'], axis=1)
+
+
+        
+        train_static_1 = add_start_end_length_op_to_static(train_static_0, train_dynamic_0)
+        test_static_1 = add_start_end_length_op_to_static(test_static_0, test_dynamic_0)
+        
         def merge_dyn_sta(X_train_static, X_train_dynamic, X_test_static, X_test_dynamic):
             return pd.merge(X_train_static, X_train_dynamic, on='id_patient'), pd.merge(X_test_static, X_test_dynamic, on='id_patient')
-        train_glob, test_glob = merge_dyn_sta(
-            train_static, train_dynamic_flat, test_static, test_dynamic_flat)
 
-        # Centering and Reducing if needed
+        
+        liste_func=[np.mean,np.std,np.amax,np.amin] #np.median doesn't work ...
+        liste_func_name=['mean','std','max','min']
 
+
+        
+        train_glob_0, test_glob_0 = train_static_1 , test_static_1
+
+        for i in range(len(liste_func)) :
+            
+            func=liste_func[i]
+    
+            train_grouped=train_dynamic_0.drop(['time'],axis=1).groupby(['id_patient'], as_index=False) #On enregistre les groupes
+            test_grouped=test_dynamic_0.drop(['time'],axis=1).groupby(['id_patient'], as_index=False)
+    
+            train_id=train_grouped['id_patient'].apply(np.mean)  #On conserve le id du patient
+            test_id=test_grouped['id_patient'].apply(np.mean)
+    
+   
+            train_dynamic_flat = train_grouped.apply(func)   #On applique la fonction
+            test_dynamic_flat = test_grouped.apply(func)
+
+            train_dynamic_flat.rename(columns=lambda x: x+'_'+liste_func_name[i] if x!='id_patient' else x, inplace=True)
+            test_dynamic_flat.rename(columns=lambda x: x+'_'+liste_func_name[i]  if x!='id_patient' else x, inplace=True)
+    
+            train_dynamic_flat['id_patient']=train_id
+            test_dynamic_flat['id_patient']=test_id
+    
+            train_glob_0, test_glob_0 = merge_dyn_sta(train_glob_0, train_dynamic_flat, test_glob_0, test_dynamic_flat)
+    
+
+        
         def center_reduce_data(W_train, W_test):
             mean_train = W_train.mean()
             std_train = W_test.std()
@@ -151,32 +208,39 @@ class Learningset:
 
         dic_to_One_Hot = {0: [1, 0], 1: [0, 1]}
 
-        y_train_cls = np.array(train_glob['target'])
-        y_train_hot = np.array(list(train_glob['target'].map(dic_to_One_Hot)))
+        y_train_cls = np.array(train_glob_0['target'])
+        y_train_hot = np.array(list(train_glob_0['target'].map(dic_to_One_Hot)))
 
-        y_test_cls = np.array(test_glob['target'])
-        y_test_hot = np.array(list(test_glob['target'].map(dic_to_One_Hot)))
+        y_test_cls = np.array(test_glob_0['target'])
+        y_test_hot = np.array(list(test_glob_0['target'].map(dic_to_One_Hot)))
 
         if centered_reduced:
-            X_train, X_test = center_reduce_data(train_glob.drop(
-                ['target'], axis=1), test_glob.drop(['target'], axis=1))
+            X_train, X_test = center_reduce_data(train_glob_0.drop(['target'], axis=1), test_glob_0.drop(['target'], axis=1))
 
             X_train = np.array(X_train)
             X_test = np.array(X_test)
 
         else:
-            X_train = np.array(train_glob.drop(['target'], axis=1))
-            X_test = np.array(test_glob.drop(['target'], axis=1))
+            X_train = np.array(train_glob_0.drop(['target'], axis=1))
+            X_test = np.array(test_glob_0.drop(['target'], axis=1))
 
         # Return
         if target_format == "cls":
-            return X_train, X_test, y_train_cls, y_test_cls, train_glob.drop(['target'], axis=1).columns
+            return X_train, X_test, y_train_cls, y_test_cls, train_glob_0.drop(['target'], axis=1).columns
 
         if target_format == "One_Hot":
-            return X_train, X_test, y_train_hot, y_test_hot, train_glob.drop(['target'], axis=1).columns
+            return X_train, X_test, y_train_hot, y_test_hot, train_glob_0.drop(['target'], axis=1).columns
 
 
 
+
+
+
+    
+
+
+
+## get_data_merged_dynamic
     def get_data_merged_dynamic(self, target_format="cls"):
 
 
