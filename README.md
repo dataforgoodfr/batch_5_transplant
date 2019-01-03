@@ -89,11 +89,11 @@ export PYTHONPATH="/Users/username/Documents/batch_5_transplant:$PYTHONPATH"
 Rendez-vous dans 'Paramètres système avancés' puis dans “Variables d’environnement…”.
 Il faut créer une nouvelle variable système ici :
 
-![pythonpath_windows1](docs/images/pythonpath_windows1.bmp)
+<img src="docs/images/pythonpath_windows1.bmp" alt="pythonpath_windows1" width="400"/>
 
 Et remplir la fenêtre de la manière suivante en remplaçant le texte dans ‘Valeur de variable’ par le chemin vers votre propre dossier ‘batch_5_transplant’ :
 
-![pythonpath_windows2](docs/images/pythonpath_windows2.bmp)
+<img src="docs/images/pythonpath_windows2.bmp" alt="pythonpath_windows2" width="500"/>
 
 Et voilà !
 N’oubliez pas de rouvrir votre jupyter. (Pour vérifier si la nouvelle variable est bien active écrivez ‘ ! set ‘ dans une cellule jupyter pour visualiser toutes les variables systèmes actives.
