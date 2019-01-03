@@ -59,6 +59,10 @@ class Dataset:
 
         df = pd.read_csv(PATH_DYNAMIC_CLEAN, parse_dates=['time'])
 
+        # Only filter columns in Dynamic Header, see https://github.com/dataforgoodfr/batch_5_transplant/issues/42
+
+        df = df[DYNAMIC_HEADERS]
+
         # Truncate dynamic file to time_offset before end of operation
 
         df = df.groupby('id_patient').apply(self._truncate_datetime)
