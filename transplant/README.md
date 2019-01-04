@@ -45,6 +45,54 @@ _class_ *Evaluation*
   - **evaluate_prediction(y)**: affiche des indicateurs de performance du modèle. `y` correspond à un `DataFrame` composé des variables `id_patient` et `prediction`.
 
 
+_class_ *visualization*
+
+Vous pouvez facilement visualiser et explorer les données dans un notebook. Il est important que `id_patient` soit en colonne dans le *DataFrame*
+
+#### Importer les données :
+
+```python
+from transplant.config import *               # import de variables
+from transplant.data.dataset import Dataset   # classe pour lire les données
+
+dataset = Dataset()
+dataset.test=True
+train, test = dataset.get_dynamic()
+
+# Concat train & test
+df = pd.concat([train, test])
+
+# Reset index id_patient
+df.reset_index(drop=True, inplace=True)
+
+df.tail() # Afficher les données
+```
+![ECMO](../docs/images/afficher_data.png)
+
+  - **plot_dynamic_features**: Explorer les variables d'un patient
+
+```python
+# On reprend notre DataFrame df un peu plus haut
+from transplant.visualization.graph import plot_dynamic_features
+
+# On regarde pour le patient n°407 les variables 'B.I.S' et'FR'
+plot_dynamic_features(df, 407, ['B.I.S', 'FR'])
+```
+
+![ECMO](../docs/images/plot_dynamic_features.png)
+
+- **plot_compare_patient**: Comparer une même variable sur plusieurs patients
+
+```python
+# On reprend notre DataFrame df un peu plus haut
+from transplant.visualization.graph import plot_compare_patient
+
+# On compare la varible 'FR' sur les patient n°167, 205 et 407
+plot_compare_patient(df, 'FR', [167, 205, 407])
+```
+
+![ECMO](../docs/images/plot_compare_patient.png)
+
 ## Tests
 
 Ce dossier contient les tests unitaires pour certains composants du projet. Pour lancer tous les tests depuis la racine du repo :
