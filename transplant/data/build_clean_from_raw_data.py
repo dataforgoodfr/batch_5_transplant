@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 from transplant.config import PATH_DYNAMIC_RAW, PATH_DYNAMIC_CLEAN,\
-    PATH_STATIC_RAW, PATH_STATIC_CLEAN, DYNAMIC_HEADERS, PATTERNS_RAW
+    PATH_STATIC_RAW, PATH_STATIC_CLEAN, RAW_DYNAMIC_HEADERS, PATTERNS_RAW
 
 
 PATIENT_TO_DROP = [
@@ -43,15 +43,15 @@ def split_dynamic_raw_multiple_blocs(df):
     proper headers.
     """
     # Detect dynamic header indexes
-    header_idx = df[df.isin(DYNAMIC_HEADERS).sum(axis=1) >= 1].index
+    def get_header_indexes(min_header):
+        return df[df.isin(RAW_DYNAMIC_HEADERS).sum(axis=1) >= min_header].index
+    header_idx = get_header_indexes(1)
     # Check: we ensure that it is exactly the same thing to detect the headers
-    # looking for at least 1 or 6 DYNAMIC_HEADERS in a row. We choose 6 because
-    # the header row with the minimum number of DYNAMIC_HEADERS was found in
-    # Bloc8D4G.xls and has 6 headers. If the check fails, a false positive
-    # might have been detected (ex: text cell with a DYNAMIC_HEADERS).
-    header_idx_6 = df[df.isin(DYNAMIC_HEADERS).sum(axis=1) >= 6].index
-    assert header_idx_6.equals(header_idx),\
-        "[split_dynamic_raw_multiple_blocs] Failed to detect headers"
+    # looking for at least 1 DYNAMIC_HEADERS or 6 in a row. We choose 6 because
+    # the header row with the minimum number of RAW_DYNAMIC_HEADERS was found
+    # in Bloc8D4G.xls and has 6 headers. If the check fails, a false positive
+    # might have been detected (ex: text cell with a RAW_DYNAMIC_HEADERS).
+    assert header_idx.equals(get_header_indexes(6)), "Failed to detect headers"
     # Add last index
     header_idx = list(header_idx) + [len(df)]
 

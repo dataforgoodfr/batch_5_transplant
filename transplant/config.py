@@ -16,6 +16,16 @@ PATTERNS_RAW = {
 }
 
 # Dynamic Headers
+# RAW_DYNAMIC_HEADERS are all headers found in the raw excel files.
+# This variable should remain unchanged as it is used to parse the raw files.
+RAW_DYNAMIC_HEADERS = [
+    'id_patient', 'time', 'B.I.S', 'BIS SR', 'DC', 'ET Des.', 'ET Sevo.',
+    'ETCO2', 'ETCO2 (mmHg)', 'ETO2', 'FC', 'FICO2', 'FICO2 (mmHg)', 'FIN2O',
+    'FR', 'FR(ecg)', 'FiO2', 'NMT TOF', 'NMTratio', 'PAPdia', 'PAPmoy',
+    'PAPsys', 'PASd', 'PASm', 'PASs', 'PEEPtotal', 'PNId', 'PNIm', 'PNIs',
+    'Pmax', 'Pmean', 'Pplat', 'RR(co2)', 'SpO2', 'SvO2 (m)', 'Temp', 'VT'
+]
+
 DYNAMIC_HEADERS = [
     'id_patient', 'time', 'B.I.S', 'BIS SR', 'DC',
     'ETCO2', 'ETCO2 (mmHg)', 'FC', 'FR', 'FiO2', 'PAPdia', 'PAPmoy',
