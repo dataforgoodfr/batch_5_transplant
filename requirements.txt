@@ -1,9 +1,7 @@
-pandas
-scikit-learn
-nb_conda
-xlrd
-tqdm
-pip
-jupyter
-cython
-plotly
+# local package
+-e .
+
+# external requirements
+numpy==1.15.4
+pandas==0.23.4
+plotly==3.2.1

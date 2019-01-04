@@ -8,7 +8,7 @@ La classe `Dataset` vous permet d'accéder aux données statiques et dynamiques 
 
 _Variables_
 
-- **time_offset**: Détermine le moment (en minutes) auquel les données dynamiques seront tronquées. Par exemple, un `time_offset` à 30 signifie que les données dynamiques seront arrêtées 30 minutes avant la dernière mesure enregistrée par les instruments de mesure. 
+- **time_offset**: Détermine le moment (en minutes) auquel les données dynamiques seront tronquées. Par exemple, un `time_offset` à 30 signifie que les données dynamiques seront arrêtées 30 minutes avant la dernière mesure enregistrée par les instruments de mesure.
 
 _Fonctions_
 
@@ -16,7 +16,7 @@ _Fonctions_
 
   ```python
 
-  from transplant.tools.dataset import Dataset
+  from transplant.data.dataset import Dataset
 
   dataset = Dataset()
 
@@ -28,7 +28,7 @@ _Fonctions_
 
   ```python
 
-  from transplant.tools.dataset import Dataset
+  from transplant.data.dataset import Dataset
 
   dataset = Dataset(time_offset=30)
 
@@ -43,3 +43,12 @@ _class_ *Evaluation*
 
   - **get_test_data**: retourne un `DataFrame` composé de l'ensemble des données statiques et dynamiques à 30 minutes avant la sortie du bloc.
   - **evaluate_prediction(y)**: affiche des indicateurs de performance du modèle. `y` correspond à un `DataFrame` composé des variables `id_patient` et `prediction`.
+
+
+## Tests
+
+Ce dossier contient les tests unitaires pour certains composants du projet. Pour lancer tous les tests depuis la racine du repo :
+
+```
+python -m unittest discover -v transplant/tests
+```

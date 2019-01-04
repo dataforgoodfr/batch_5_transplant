@@ -7,27 +7,31 @@ PATH_DYNAMIC_CLEAN = ROOT_DIR + '/data/clean/dynamic.csv'
 PATH_STATIC_RAW = ROOT_DIR + '/data/raw/static/'
 PATH_STATIC_CLEAN = ROOT_DIR + '/data/clean/static.csv'
 PATH_DOCS = ROOT_DIR + '/data/clean/variables_documentation.csv'
+PATH_DYNAMIC_NORMS = ROOT_DIR + '/data/norms/features_norm.json'
+
+# Raw file patterns
+PATTERNS_RAW = {
+    "dynamic": "Bloc*.xls",
+    "static": "base LgTx*.xlsx"
+}
 
 # Dynamic Headers
 DYNAMIC_HEADERS = [
-    'id_patient', 'time', 'B.I.S', 'BIS SR', 'DC', 'ET Des.', 'ET Sevo.',
-    'ETCO2', 'ETCO2 (mmHg)', 'ETO2', 'FC', 'FICO2', 'FICO2 (mmHg)', 'FIN2O',
-    'FR', 'FR(ecg)', 'FiO2', 'NMT TOF', 'NMTratio', 'PAPdia', 'PAPmoy',
+    'id_patient', 'time', 'B.I.S', 'BIS SR', 'DC',
+    'ETCO2', 'ETCO2 (mmHg)', 'FC', 'FR', 'FiO2', 'PAPdia', 'PAPmoy',
     'PAPsys', 'PASd', 'PASm', 'PASs', 'PEEPtotal', 'PNId', 'PNIm', 'PNIs',
-    'Pmax', 'Pmean', 'Pplat', 'RR(co2)', 'SpO2', 'SvO2 (m)', 'Temp', 'VT'
+    'Pmax', 'Pmean', 'Pplat', 'SpO2', 'SvO2 (m)', 'Temp', 'VT'
 ]
 
 DYNAMIC_CATEGORIES = {
-    'neurology': [
-        'id_patient', 'time', 'B.I.S', 'BIS SR', 'ET Des.', 'ET Sevo.',
-        'NMT TOF', 'NMTratio'],
+    'neurology': ['id_patient', 'time', 'B.I.S', 'BIS SR'],
     'haemodynamic': [
         'id_patient', 'time', 'DC', 'FC', 'PAPdia', 'PAPmoy', 'PAPsys',
         'PASd', 'PASm', 'PASs', 'PNId', 'PNIm', 'PNIs'],
     'respiratory': [
-        'id_patient', 'time', 'ETCO2', 'ETCO2 (mmHg)', 'ETO2', 'FICO2',
-        'FICO2 (mmHg)', 'FIN2O', 'FiO2', 'FR', 'FR(ecg)', 'MAC', 'PEEPtotal',
-        'Pmax', 'Pmean', 'Pplat', 'RR(co2)', 'SpO2', 'SvO2 (m)', 'VT'],
+        'id_patient', 'time', 'ETCO2', 'ETCO2 (mmHg)', 'FiO2', 'FR',
+        'PEEPtotal', 'Pmax', 'Pmean', 'Pplat', 'SpO2',
+        'SvO2 (m)', 'VT'],
     'temperature': [
         'id_patient', 'time', 'Temp']
 }
