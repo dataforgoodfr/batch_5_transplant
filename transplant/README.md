@@ -47,23 +47,15 @@ _class_ *Evaluation*
 
 _class_ *visualization*
 
-Vous pouvez facilement visualiser et explorer les données dans un notebook. Il est important que `id_patient` soit en colonne dans le *DataFrame*
+Vous pouvez facilement visualiser et explorer les données dans un notebook. Il est important que `id_patient` soit en colonne dans le *DataFrame*. Nous importerons ici l'integralité du set dynamique: 
 
-#### Importer les données :
+  - **import_data**:
 
 ```python
+import pandas as pd
 from transplant.config import *               # import de variables
-from transplant.data.dataset import Dataset   # classe pour lire les données
 
-dataset = Dataset()
-dataset.test=True
-train, test = dataset.get_dynamic()
-
-# Concat train & test
-df = pd.concat([train, test])
-
-# Reset index id_patient
-df.reset_index(drop=True, inplace=True)
+df = pd.read_csv(PATH_DYNAMIC_CLEAN)
 
 df.tail() # Afficher les données
 ```
