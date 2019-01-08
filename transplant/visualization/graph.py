@@ -168,6 +168,8 @@ def plot_analyse_factory(df, pca, hue=False):
     """
     
     init_notebook_mode(connected=True)
+
+    color_list = ['#6ac1a5', '#fa8d67', '#8ea1c9']
     
     pca_expl = round(pca.explained_variance_ratio_[0:2].sum(), 2)
     
