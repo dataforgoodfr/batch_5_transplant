@@ -77,7 +77,7 @@ def create_cluster(feature_analysis, X_pca):
     return feature_analysis, kmean
 
 
-def analyse_factory(df, feature, cluster=False):
+def run_pca(df, feature, cluster=False):
     """
 	  Call analyse_feature_by_patient & create_pca_feature
 
