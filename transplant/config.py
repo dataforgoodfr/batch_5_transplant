@@ -28,9 +28,9 @@ RAW_DYNAMIC_HEADERS = [
 
 DYNAMIC_HEADERS = [
     'id_patient', 'time', 'B.I.S', 'BIS SR', 'DC',
-    'ETCO2', 'ETCO2 (mmHg)', 'FC', 'FR', 'FiO2', 'PAPdia', 'PAPmoy',
+    'ETCO2', 'FC', 'FR', 'FiO2', 'PAPdia', 'PAPmoy',
     'PAPsys', 'PASd', 'PASm', 'PASs', 'PEEPtotal', 'PNId', 'PNIm', 'PNIs',
-    'Pmax', 'Pmean', 'Pplat', 'SpO2', 'SvO2 (m)', 'Temp', 'VT'
+    'Pmax', 'Pmean', 'SpO2', 'SvO2 (m)', 'Temp', 'VT'
 ]
 
 DYNAMIC_CATEGORIES = {
