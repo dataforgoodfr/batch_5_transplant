@@ -63,6 +63,9 @@ class Dataset:
 
         df = df[DYNAMIC_HEADERS]
 
+        # create bool event on declampage
+        df = self._get_declampage_event(df)
+
         # Truncate dynamic file to time_offset before end of operation
 
         df = df.groupby('id_patient').apply(self._truncate_datetime)
@@ -92,3 +95,38 @@ class Dataset:
     def _truncate_datetime(self, df):
         date_max = df.time.max() - timedelta(minutes=self.time_offset)
         return df[df.time <= date_max]
+
+    def _get_declampage_event(self, df):
+        """
+        Create Bool features on event declampage_cote1 & declampage_cote2 from
+        Static Dataset
+
+        - Input : df : [DataFrame] : dynmaic DataFrame
+        - Ouput : df : [DataFrame] : dynmaic DataFrame + declampage_cote1_done & declampage_cote2_done
+        """
+
+        df_static = pd.read_csv(PATH_STATIC_CLEAN)
+        # Filter column
+        df_static = df_static[['id_patient', 'Heure_declampage_cote1', 'Heure_declampage_cote2']]
+        # Transform object time to to_timedelta
+        df_static['Heure_declampage_cote1'] = pd.to_timedelta(df_static['Heure_declampage_cote1'])
+        df_static['Heure_declampage_cote2'] = pd.to_timedelta(df_static['Heure_declampage_cote2'])
+
+        # Merging on id_patient
+        df = df.merge(df_static[['id_patient', 'Heure_declampage_cote1', 'Heure_declampage_cote2']], 
+                        on='id_patient', how='left')
+
+        # Convert `time` to real time : "2014-05-14 02:12:00" -> "02:12:00"
+        df['date_time'] = pd.to_timedelta(df.time.dt.strftime("%H:%M:%S"))
+
+        # Create event features
+        df['declampage_cote1_done'] = 0
+        df.loc[df['Heure_declampage_cote1'] <= df['date_time'], 'declampage_cote1_done'] = 1
+
+        df['declampage_cote2_done'] = 0
+        df.loc[df['Heure_declampage_cote2'] <= df['date_time'], 'declampage_cote2_done'] = 1
+
+        # Drop non usefull column
+        df.drop(['date_time', 'Heure_declampage_cote1', 'Heure_declampage_cote2'], axis=1, inplace=True)
+
+        return df
