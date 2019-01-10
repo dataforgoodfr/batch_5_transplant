@@ -20,8 +20,9 @@ class Dataset:
 
     _random_state = 1
 
-    def __init__(self, time_offset=30):
+    def __init__(self, time_offset=30, smooth=False):
         self.time_offset = time_offset
+        self.smooth = smooth
 
     def get_static(self):
 
