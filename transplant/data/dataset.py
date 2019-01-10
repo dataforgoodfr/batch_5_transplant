@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import datetime
+import logging
 from datetime import timedelta
 from sklearn.model_selection import train_test_split
 
@@ -20,9 +21,10 @@ class Dataset:
 
     _random_state = 1
 
-    def __init__(self, time_offset=30, smooth=False):
+    def __init__(self, time_offset=30, smooth=False, smooth_periods=5):
         self.time_offset = time_offset
         self.smooth = smooth
+        self.smooth_periods = smooth_periods
 
     def get_static(self):
 
@@ -67,6 +69,21 @@ class Dataset:
         # Truncate dynamic file to time_offset before end of operation
 
         df = df.groupby('id_patient').apply(self._truncate_datetime)
+
+        # Smooth dynamic dataset
+
+        if self.smooth:
+            alert_smooth = "Smoothing dynamic dataset with {} periods" \
+                            .format(self.smooth_periods)
+            logging.warning(alert_smooth)
+            melt = pd.melt(df, id_vars=['id_patient', 'time']) \
+                     .groupby(['id_patient', 'variable']) \
+                     .rolling(self.smooth_periods, min_periods=3, on='time') \
+                     .value.mean() \
+                     .reset_index()
+            df = melt.pivot_table(index=['id_patient', 'time'],
+                                  columns='variable',
+                                  values='value').reset_index()
 
         # Filter result based on static set
 
