@@ -154,7 +154,7 @@ def plot_compare_patient(df, feature_to_analyse, patient_list):
     fig = dict(data=data_graph, layout=layout)
     iplot(fig)
 
-def plot_analyse_factory(df, pca, hue=False):
+def plot_analyse_factory(df, pca, hue=False, kmean=None):
     """
     Plotting result from tools.analyse_factory.analyse_factory()
 
@@ -162,12 +162,15 @@ def plot_analyse_factory(df, pca, hue=False):
         - df [DataFrame] : Muse have features [['id_patient']]
         - pca [sklearn.decomposition.PCA] : PCA already fit
         - hue [Bool] : Using cluster to plot differents colors
+        - kmean [sklearn.kmean] : Kmean already fit. hue must be True
         
     Ouput : 
         - Display a plotly graph
     """
     
     init_notebook_mode(connected=True)
+
+    color_list = ['#6ac1a5', '#fa8d67', '#8ea1c9']
     
     pca_expl = round(pca.explained_variance_ratio_[0:2].sum(), 2)
     
@@ -193,6 +196,21 @@ def plot_analyse_factory(df, pca, hue=False):
                                 text=df_temp["id_patient"].tolist()
                               )
             data.append(trace) 
+
+        if kmean:
+
+            centroids = kmean.cluster_centers_
+            center = go.Scatter(x=centroids[:, 0],
+                                y=centroids[:, 1],
+                                showlegend=False,
+                                mode='markers', 
+                                text='centroid',
+                                marker=dict(
+                                        size=10,
+                                        opacity = 0.4,
+                                        symbol=17,
+                                        color='black'))
+            data.append(center)
     
     # Design graph
     layout = dict(
