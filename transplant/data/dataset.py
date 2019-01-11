@@ -102,31 +102,47 @@ class Dataset:
         Static Dataset
 
         - Input : df : [DataFrame] : dynmaic DataFrame
-        - Ouput : df : [DataFrame] : dynmaic DataFrame + declampage_cote1_done & declampage_cote2_done
+        - Ouput : df : [DataFrame] : dynmaic DataFrame + declampage_cote1_done &
+                                     declampage_cote2_done
         """
 
-        df_static = pd.read_csv(PATH_STATIC_CLEAN)
-        # Filter column
-        df_static = df_static[['id_patient', 'Heure_declampage_cote1', 'Heure_declampage_cote2']]
-        # Transform object time to to_timedelta
-        df_static['Heure_declampage_cote1'] = pd.to_timedelta(df_static['Heure_declampage_cote1'])
-        df_static['Heure_declampage_cote2'] = pd.to_timedelta(df_static['Heure_declampage_cote2'])
+        df_static = pd.read_csv(PATH_STATIC_CLEAN, 
+                                usecols=['id_patient', 'Heure_declampage_cote1', 
+                                'Heure_declampage_cote2', 'date_transplantation',
+                                'heure_arrivee_bloc']
+                                )
+
+        # Concat Date + heure begin of operaiton
+        df_static['date_debut_operation'] = pd.to_datetime(df_static['date_transplantation'] + 
+                                                           ' ' + 
+                                                           df_static['heure_arrivee_bloc'])
 
         # Merging on id_patient
-        df = df.merge(df_static[['id_patient', 'Heure_declampage_cote1', 'Heure_declampage_cote2']], 
-                        on='id_patient', how='left')
+        df = df.merge(df_static, on='id_patient', how='left')
 
-        # Convert `time` to real time : "2014-05-14 02:12:00" -> "02:12:00"
-        df['date_time'] = pd.to_timedelta(df.time.dt.strftime("%H:%M:%S"))
+        # Add date to time for declampage_cote
+        df['Heure_declampage_cote1'] = pd.to_datetime(df['time'].dt.strftime("%Y-%m-%d") + 
+                                                      ' ' + 
+                                                      df['Heure_declampage_cote1'])
+        df['Heure_declampage_cote2'] = pd.to_datetime(df['time'].dt.strftime("%Y-%m-%d") + 
+                                                      ' ' + 
+                                                      df['Heure_declampage_cote2'])
 
         # Create event features
         df['declampage_cote1_done'] = 0
-        df.loc[df['Heure_declampage_cote1'] <= df['date_time'], 'declampage_cote1_done'] = 1
+        df.loc[(df['Heure_declampage_cote1'] <= df['time']) & 
+               (df['Heure_declampage_cote1'] > df['date_debut_operation']), 
+               'declampage_cote1_done'] = 1
 
         df['declampage_cote2_done'] = 0
-        df.loc[df['Heure_declampage_cote2'] <= df['date_time'], 'declampage_cote2_done'] = 1
+        df.loc[(df['Heure_declampage_cote2'] <= df['time']) &
+               (df['Heure_declampage_cote2'] > df['date_debut_operation']), 
+               'declampage_cote2_done'] = 1
+
 
         # Drop non usefull column
-        df.drop(['date_time', 'Heure_declampage_cote1', 'Heure_declampage_cote2'], axis=1, inplace=True)
+        df.drop(['Heure_declampage_cote1', 'Heure_declampage_cote2', 
+                'date_debut_operation'], 
+                axis=1, inplace=True)
 
         return df
