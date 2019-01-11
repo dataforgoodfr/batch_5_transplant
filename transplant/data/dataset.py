@@ -142,7 +142,7 @@ class Dataset:
 
         # Drop non usefull column
         df.drop(['Heure_declampage_cote1', 'Heure_declampage_cote2', 
-                'date_debut_operation'], 
+                'date_debut_operation', 'date_transplantation', 'heure_arrivee_bloc'], 
                 axis=1, inplace=True)
 
         return df
