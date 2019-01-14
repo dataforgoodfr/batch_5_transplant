@@ -61,7 +61,8 @@ def split_dynamic_raw_multiple_blocs(df):
 
     for i in range(len(header_idx) - 1):
         df_s = df.loc[header_idx[i]: header_idx[i + 1] - 1].copy()
-        df_s.columns = ['id_patient', 'time'] + df_s.iloc[0].tolist()[2:]
+        df_s.columns = ['id_patient', 'time', 'date', 'foreign_key'] + \
+            df_s.iloc[0].tolist()[4:]
         df_s = df_s.loc[:, ~df_s.columns.isna()]  # Remove other NaN columns
         dfs.append(df_s.reset_index(drop=True))
     return dfs
@@ -73,7 +74,8 @@ def clean_dynamic_raw(df, df_static):
     df.columns = [c.strip() for c in df.columns]   # trim spaces
 
     # Change column order: put [id_patient, time] at first
-    df = df.set_index(['id_patient', 'time']).reset_index()
+    df = df.set_index(['id_patient', 'time', 'date', 'foreign_key']). \
+        reset_index()
 
     # Drop corrupted or useless data
     col_to_drop = [col for col in df.columns if col.startswith('Unnamed:')]
@@ -87,11 +89,10 @@ def clean_dynamic_raw(df, df_static):
     # Convert time column to a real datetime.
     # We need to join df_static to retrieve the date and apply
     # a correction if the timestamps pass through midnight
-    df = df.merge(df_static[['id_patient', 'date_transplantation']])
+    df['date'] = pd.to_datetime(df['date'], format='%d/%m/%Y')
     df['time'] = pd.to_datetime(
-        df['date_transplantation'].dt.strftime('%Y-%m-%d') + ' ' + df['time'])
-    df = df.groupby('id_patient').apply(correct_date_shift)
-    df = df.drop(columns=['date_transplantation'])
+        df['date'].dt.strftime('%Y-%m-%d') + ' ' + df['time'])
+    df = df.drop(columns=['date', 'foreign_key'])
 
     # Checks
     assert (df.id_patient.dtypes == 'int'),\
