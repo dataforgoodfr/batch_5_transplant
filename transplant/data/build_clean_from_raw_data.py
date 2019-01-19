@@ -69,41 +69,109 @@ def split_dynamic_raw_multiple_blocs(df):
 
 def clean_dynamic_raw(df_dynamic, df_static):
     '''Clean dynamic raw DataFrame'''
-    # Rename some columns
-    df_dynamic.columns = [c.strip() for c in df_dynamic.columns]   # trim spaces
+    # Rename some columns and trim spaces
+    df_dynamic.columns = [c.strip() for c in df_dynamic.columns]
 
-    # Merge foreign_key with id_patient as Bloc.xls files do not contain the
-    # static id_patient file.
-    lookup = pd.read_csv(PATH_STATIC_LOOKUP)
-    df_dynamic = pd.merge(df_dynamic, lookup, how='inner', on='foreign_key')
+    # Create a static_lookup, matching id_patient and foreign_key
+    key_lookup = pd.read_csv(PATH_STATIC_LOOKUP)
 
-    # Change column order
-    df_dynamic = df_dynamic.set_index(['id_patient', 'time', 'date']). \
-        reset_index()
+    static_lookup = pd.merge(df_static[['id_patient',
+                                        'date_transplantation',
+                                        'date_sortie_bloc',
+                                        'heure_arrivee_bloc',
+                                        'heure_transfert_rea']],
+                             key_lookup, how='left', on='id_patient')
+    static_lookup.dropna(subset=['foreign_key'], inplace=True)
+
+    # The foreign_key is the unique identifier of a user. Since a user can have
+    # multiple transplantations, we create two matching keys, one for the
+    # beginning (date_transplantation), one for the end (date_sortie_bloc.)
+    # More details here - https://github.com/dataforgoodfr/batch_5_transplant
+    # issues/62.
+    static_lookup['id_transplant_begin'] = \
+        static_lookup['foreign_key'].astype(int).astype(str) + \
+        '-' + static_lookup['date_transplantation'].astype(str)
+
+    static_lookup['id_transplant_end'] = \
+        static_lookup['foreign_key'].astype(int).astype(str) + \
+        '-' + static_lookup['date_sortie_bloc'].astype(str)
+
+    static_lookup.drop('foreign_key', axis=1, inplace=True)
 
     # Drop corrupted or useless data
-    col_to_drop = [col for col in df_dynamic.columns 
+    col_to_drop = [col for col in df_dynamic.columns
                    if col.startswith('Unnamed:')]
     df_dynamic = df_dynamic.drop(columns=col_to_drop)
-    df_dynamic = df_dynamic.dropna(subset=['id_patient', 'time'])
-    df_dynamic = df_dynamic[~df_dynamic.id_patient.isin(PATIENT_TO_DROP)]
+    df_dynamic = df_dynamic.dropna(subset=['foreign_key', 'date'])
 
     # Format dtypes
     df_dynamic = cast_integers(df_dynamic)
 
-    # Convert time column to a real datetime.
-    # We need to join df_static to retrieve the date and apply
-    # a correction if the timestamps pass through midnight
-    df_dynamic['date'] = pd.to_datetime(df_dynamic['date'], format='%d/%m/%Y')
-    df_dynamic['time'] = pd.to_datetime(
-        df_dynamic['date'].dt.strftime('%Y-%m-%d') + ' ' + df_dynamic['time'])
-    df_dynamic = df_dynamic.drop(columns=['date', 'foreign_key'])
+    # From dynamic dataset, parse datetime. Beware the format might be
+    # interpreted wrong by Pandas ('%d/%m/%Y' vs '%m/%d/%Y') resulting in bad
+    # matching.
+    df_dynamic['date'] = pd.to_datetime(df_dynamic['date'],
+                                        format='%d/%m/%Y',
+                                        exact=True)
+
+    # Create a matching key for the dynamic set
+    df_dynamic['id_transplant'] = \
+        df_dynamic['foreign_key'].astype(int).astype(str) + \
+        '-' + df_dynamic['date'].astype(str)
+
+    # Since a patient can be operated on multiple days, we isolate patients
+    # in a separate DataFrame static_lookup_multi_days
+    static_lookup_multi_days = \
+        static_lookup[static_lookup['date_sortie_bloc'] >
+            static_lookup['date_transplantation']]
+
+    # We perform two merges between dynamic and static for both begin and end
+    # of transplantation.
+    begin = pd.merge(df_dynamic, static_lookup, left_on='id_transplant',
+                     right_on='id_transplant_begin', how='inner')
+    end = pd.merge(df_dynamic, static_lookup_multi_days,
+                   left_on='id_transplant',
+                   right_on='id_transplant_end', how='inner')
+
+    df_dynamic_transplant = pd.concat([begin, end])
+
+    # Create datetime column by concatenating date and time variables
+    df_dynamic_transplant['datetime'] = pd.to_datetime(
+        df_dynamic_transplant['date'].dt.strftime('%Y-%m-%d') +
+        ' ' + df_dynamic_transplant['time'])
+
+    # Filter datetime after the hour of operation beginning (heure_arrivee_bloc)
+    # and before end of operation (heure_transfert_rea).
+    df_dynamic_transplant['operation_begin'] = pd.to_datetime(
+        df_dynamic_transplant['date_transplantation'].dt.strftime('%Y-%m-%d') +
+        ' ' + df_dynamic_transplant['heure_arrivee_bloc'].astype(str))
+
+    df_dynamic_transplant['operation_end'] = pd.to_datetime(
+        df_dynamic_transplant['date_sortie_bloc'].dt.strftime('%Y-%m-%d') +
+        ' ' + df_dynamic_transplant['heure_transfert_rea'].astype(str))
+
+    transplantation_limits_mask = \
+        (df_dynamic_transplant['datetime'] >= df_dynamic_transplant['operation_begin']) & \
+        (df_dynamic_transplant['datetime'] <= df_dynamic_transplant['operation_end'])
+
+    df_dynamic_transplant = df_dynamic_transplant[transplantation_limits_mask]
+
+    # Change column order
+    df_dynamic_transplant = df_dynamic_transplant. \
+        set_index(['id_patient', 'datetime']).reset_index()
+
+    df_dynamic_transplant = df_dynamic_transplant.drop(
+        columns=['date', 'foreign_key', 'id_transplant_begin',
+                 'id_transplant_end', 'date_sortie_bloc',
+                 'date_transplantation', 'id_transplant', 'time',
+                 'operation_begin', 'operation_end', 'heure_arrivee_bloc',
+                 'heure_transfert_rea'])
 
     # Checks
-    assert (df_dynamic.id_patient.dtypes == 'int'),\
+    assert (df_dynamic_transplant.id_patient.dtypes == 'int'),\
         "TypeError: Inconsistency in parsed dynamic data: id_patient not int"
 
-    return df_dynamic
+    return df_dynamic_transplant
 
 
 def correct_date_shift(x):
@@ -144,6 +212,9 @@ def clean_static_raw(df):
     df.loc[df['date_sortie_bloc'] < datetime(2000, 1, 1),
            'date_sortie_bloc'] = np.NaN
     df.replace({'NF': np.NaN}, inplace=True)
+
+    # Replace heure_arrivee_bloc to 00:00:00 if missing
+    df['heure_arrivee_bloc'] = df['heure_arrivee_bloc'].fillna('00:00:00')
 
     # Format dtypes
     df = cast_integers(df)
