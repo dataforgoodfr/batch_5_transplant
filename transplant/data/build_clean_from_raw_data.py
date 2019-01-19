@@ -6,8 +6,7 @@ from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
-from transplant.config import PATH_DYNAMIC_RAW, PATH_DYNAMIC_CLEAN,\
-    PATH_STATIC_RAW, PATH_STATIC_CLEAN, RAW_DYNAMIC_HEADERS, PATTERNS_RAW
+from transplant.config import *
 
 
 PATIENT_TO_DROP = [
@@ -61,8 +60,8 @@ def split_dynamic_raw_multiple_blocs(df):
 
     for i in range(len(header_idx) - 1):
         df_s = df.loc[header_idx[i]: header_idx[i + 1] - 1].copy()
-        df_s.columns = ['id_patient', 'time', 'date', 'foreign_key'] + \
-            df_s.iloc[0].tolist()[4:]
+        df_s.columns = ['time', 'date', 'foreign_key'] + \
+            df_s.iloc[0].tolist()[3:]
         df_s = df_s.loc[:, ~df_s.columns.isna()]  # Remove other NaN columns
         dfs.append(df_s.reset_index(drop=True))
     return dfs
@@ -73,8 +72,13 @@ def clean_dynamic_raw(df, df_static):
     # Rename some columns
     df.columns = [c.strip() for c in df.columns]   # trim spaces
 
-    # Change column order: put [id_patient, time] at first
-    df = df.set_index(['id_patient', 'time', 'date', 'foreign_key']). \
+    # Merge foreign_key with id_patient as Bloc.xls files do not contain the
+    # static id_patient file.
+    lookup = pd.read_csv(PATH_STATIC_LOOKUP)
+    df = pd.merge(df, lookup, how='inner', on='foreign_key')
+
+    # Change column order
+    df = df.set_index(['id_patient', 'time', 'date']). \
         reset_index()
 
     # Drop corrupted or useless data
