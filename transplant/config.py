@@ -164,3 +164,23 @@ STATIC_CATEGORIES = {
         'Tabagisme_donor', 'Aspirations_donor', 'RX_donor', 'PF_donor',
         'oto_score']
 }
+
+
+TRESHOLD_JSON_TS = {
+ "B.I.S": {
+    "etendue": [0, 100],
+    "normalite": [40, 60]
+            },
+    "PAPsys": {
+    "etendue": [0, 4],
+    "normalite": [0, 1]
+      },
+ "DC": {
+    "etendue": [0, 100],
+    "normalite": [0, 100]
+    },
+ "Pmean": {
+    "etendue": [0, 100],
+    "normalite": [5, 10]
+    }
+}
