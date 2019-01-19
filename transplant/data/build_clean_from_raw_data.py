@@ -67,42 +67,43 @@ def split_dynamic_raw_multiple_blocs(df):
     return dfs
 
 
-def clean_dynamic_raw(df, df_static):
+def clean_dynamic_raw(df_dynamic, df_static):
     '''Clean dynamic raw DataFrame'''
     # Rename some columns
-    df.columns = [c.strip() for c in df.columns]   # trim spaces
+    df_dynamic.columns = [c.strip() for c in df_dynamic.columns]   # trim spaces
 
     # Merge foreign_key with id_patient as Bloc.xls files do not contain the
     # static id_patient file.
     lookup = pd.read_csv(PATH_STATIC_LOOKUP)
-    df = pd.merge(df, lookup, how='inner', on='foreign_key')
+    df_dynamic = pd.merge(df_dynamic, lookup, how='inner', on='foreign_key')
 
     # Change column order
-    df = df.set_index(['id_patient', 'time', 'date']). \
+    df_dynamic = df_dynamic.set_index(['id_patient', 'time', 'date']). \
         reset_index()
 
     # Drop corrupted or useless data
-    col_to_drop = [col for col in df.columns if col.startswith('Unnamed:')]
-    df = df.drop(columns=col_to_drop)
-    df = df.dropna(subset=['id_patient', 'time'])
-    df = df[~df.id_patient.isin(PATIENT_TO_DROP)]
+    col_to_drop = [col for col in df_dynamic.columns 
+                   if col.startswith('Unnamed:')]
+    df_dynamic = df_dynamic.drop(columns=col_to_drop)
+    df_dynamic = df_dynamic.dropna(subset=['id_patient', 'time'])
+    df_dynamic = df_dynamic[~df_dynamic.id_patient.isin(PATIENT_TO_DROP)]
 
     # Format dtypes
-    df = cast_integers(df)
+    df_dynamic = cast_integers(df_dynamic)
 
     # Convert time column to a real datetime.
     # We need to join df_static to retrieve the date and apply
     # a correction if the timestamps pass through midnight
-    df['date'] = pd.to_datetime(df['date'], format='%d/%m/%Y')
-    df['time'] = pd.to_datetime(
-        df['date'].dt.strftime('%Y-%m-%d') + ' ' + df['time'])
-    df = df.drop(columns=['date', 'foreign_key'])
+    df_dynamic['date'] = pd.to_datetime(df_dynamic['date'], format='%d/%m/%Y')
+    df_dynamic['time'] = pd.to_datetime(
+        df_dynamic['date'].dt.strftime('%Y-%m-%d') + ' ' + df_dynamic['time'])
+    df_dynamic = df_dynamic.drop(columns=['date', 'foreign_key'])
 
     # Checks
-    assert (df.id_patient.dtypes == 'int'),\
+    assert (df_dynamic.id_patient.dtypes == 'int'),\
         "TypeError: Inconsistency in parsed dynamic data: id_patient not int"
 
-    return df
+    return df_dynamic
 
 
 def correct_date_shift(x):
