@@ -135,8 +135,8 @@ def clean_dynamic_raw(df_dynamic, df_static):
 
     df_dynamic_transplant = pd.concat([begin, end])
 
-    # Create datetime column by concatenating date and time variables
-    df_dynamic_transplant['datetime'] = pd.to_datetime(
+    # Create time column by concatenating date and time variables
+    df_dynamic_transplant['time'] = pd.to_datetime(
         df_dynamic_transplant['date'].dt.strftime('%Y-%m-%d') +
         ' ' + df_dynamic_transplant['time'])
 
@@ -151,19 +151,19 @@ def clean_dynamic_raw(df_dynamic, df_static):
         ' ' + df_dynamic_transplant['heure_transfert_rea'].astype(str))
 
     transplantation_limits_mask = \
-        (df_dynamic_transplant['datetime'] >= df_dynamic_transplant['operation_begin']) & \
-        (df_dynamic_transplant['datetime'] <= df_dynamic_transplant['operation_end'])
+        (df_dynamic_transplant['time'] >= df_dynamic_transplant['operation_begin']) & \
+        (df_dynamic_transplant['time'] <= df_dynamic_transplant['operation_end'])
 
     df_dynamic_transplant = df_dynamic_transplant[transplantation_limits_mask]
 
     # Change column order
     df_dynamic_transplant = df_dynamic_transplant. \
-        set_index(['id_patient', 'datetime']).reset_index()
+        set_index(['id_patient', 'time']).reset_index()
 
     df_dynamic_transplant = df_dynamic_transplant.drop(
         columns=['date', 'foreign_key', 'id_transplant_begin',
                  'id_transplant_end', 'date_sortie_bloc',
-                 'date_transplantation', 'id_transplant', 'time',
+                 'date_transplantation', 'id_transplant',
                  'operation_begin', 'operation_end', 'heure_arrivee_bloc',
                  'heure_transfert_rea'])
 
