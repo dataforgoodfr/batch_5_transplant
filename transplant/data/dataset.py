@@ -135,7 +135,8 @@ class Dataset:
                (df['Heure_declampage_cote1'] > df['date_debut_operation']), 
                'declampage_cote1_done'] = 1
 
-        # Fix declampage_cote1_done to 0 because new day.
+        # Fix declampage_cote1_done to 0 because new day after heure
+        # declampage 1.
         max_date_declampage_1_by_patient = \
             df[df.declampage_cote1_done == 1].groupby('id_patient',
                                                         as_index=False)['time'].max()
@@ -155,11 +156,27 @@ class Dataset:
                (df['Heure_declampage_cote2'] > df['date_debut_operation']), 
                'declampage_cote2_done'] = 1
 
+        # Fix declampage_cote2_done to 0 because new day after heure
+        # declampage 2.
+        max_date_declampage_2_by_patient = \
+            df[df.declampage_cote2_done == 1].groupby('id_patient',
+                                                        as_index=False)['time'].max()
+        max_date_declampage_2_by_patient.columns = ['id_patient', 'max_date_declampage_2']
+
+        df = df.merge(max_date_declampage_2_by_patient, 
+                      on='id_patient', 
+                      how='inner')
+
+        df.loc[(df['declampage_cote2_done'] == 0) & 
+               (df['time'] > df['max_date_declampage_2']), 
+                'declampage_cote2_done'] = 1
+
 
         # Drop non usefull column
         df.drop(['Heure_declampage_cote1', 'Heure_declampage_cote2', 
                 'date_debut_operation', 'date_transplantation', 
-                'heure_arrivee_bloc', 'max_date_declampage_1'], 
+                'heure_arrivee_bloc', 'max_date_declampage_1',
+                'declampage_cote2_done'], 
                 axis=1, inplace=True)
 
         return df
