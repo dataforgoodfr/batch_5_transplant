@@ -165,7 +165,7 @@ class Dataset:
 
         df = df.merge(max_date_declampage_2_by_patient, 
                       on='id_patient', 
-                      how='inner')
+                      how='left')
 
         df.loc[(df['declampage_cote2_done'] == 0) & 
                (df['time'] > df['max_date_declampage_2']), 
