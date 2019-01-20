@@ -129,11 +129,27 @@ class Dataset:
                                                       df['Heure_declampage_cote2'])
 
         # Create event features
+        ## declampage_cote1_done
         df['declampage_cote1_done'] = 0
         df.loc[(df['Heure_declampage_cote1'] <= df['time']) & 
                (df['Heure_declampage_cote1'] > df['date_debut_operation']), 
                'declampage_cote1_done'] = 1
 
+        # Fix declampage_cote1_done to 0 because new day.
+        max_date_declampage_1_by_patient = \
+            df[df.declampage_cote1_done == 1].groupby('id_patient',
+                                                        as_index=False)['time'].max()
+        max_date_declampage_1_by_patient.columns = ['id_patient', 'max_date_declampage_1']
+
+        df = df.merge(max_date_declampage_1_by_patient, 
+                      on='id_patient', 
+                      how='inner')
+
+        dyna.loc[(dyna['declampage_cote1_done'] == 0) & 
+                 (dyna['time'] > dyna['max_date_declampage_1']), 
+                  'declampage_cote1_done'] = 1
+
+        ## declampage_cote2_done
         df['declampage_cote2_done'] = 0
         df.loc[(df['Heure_declampage_cote2'] <= df['time']) &
                (df['Heure_declampage_cote2'] > df['date_debut_operation']), 
