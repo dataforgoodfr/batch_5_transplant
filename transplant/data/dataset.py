@@ -145,9 +145,9 @@ class Dataset:
                       on='id_patient', 
                       how='inner')
 
-        dyna.loc[(dyna['declampage_cote1_done'] == 0) & 
-                 (dyna['time'] > dyna['max_date_declampage_1']), 
-                  'declampage_cote1_done'] = 1
+        df.loc[(df['declampage_cote1_done'] == 0) & 
+               (df['time'] > df['max_date_declampage_1']), 
+                'declampage_cote1_done'] = 1
 
         ## declampage_cote2_done
         df['declampage_cote2_done'] = 0
@@ -158,7 +158,8 @@ class Dataset:
 
         # Drop non usefull column
         df.drop(['Heure_declampage_cote1', 'Heure_declampage_cote2', 
-                'date_debut_operation', 'date_transplantation', 'heure_arrivee_bloc'], 
+                'date_debut_operation', 'date_transplantation', 
+                'heure_arrivee_bloc', 'max_date_declampage_1'], 
                 axis=1, inplace=True)
 
         return df
