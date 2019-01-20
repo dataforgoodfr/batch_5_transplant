@@ -176,7 +176,7 @@ class Dataset:
         df.drop(['Heure_declampage_cote1', 'Heure_declampage_cote2', 
                 'date_debut_operation', 'date_transplantation', 
                 'heure_arrivee_bloc', 'max_date_declampage_1',
-                'declampage_cote2_done'], 
+                'max_date_declampage_2'], 
                 axis=1, inplace=True)
 
         return df
