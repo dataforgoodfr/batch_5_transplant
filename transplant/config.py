@@ -6,6 +6,7 @@ PATH_DYNAMIC_RAW = ROOT_DIR + '/data/raw/dynamic/'
 PATH_DYNAMIC_CLEAN = ROOT_DIR + '/data/clean/dynamic.csv'
 PATH_STATIC_RAW = ROOT_DIR + '/data/raw/static/'
 PATH_STATIC_CLEAN = ROOT_DIR + '/data/clean/static.csv'
+PATH_STATIC_LOOKUP = ROOT_DIR + '/data/raw/lookup/lookup.csv'
 PATH_DOCS = ROOT_DIR + '/data/clean/variables_documentation.csv'
 PATH_DYNAMIC_NORMS = ROOT_DIR + '/data/norms/features_norm.json'
 
