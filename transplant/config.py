@@ -165,3 +165,29 @@ STATIC_CATEGORIES = {
         'Tabagisme_donor', 'Aspirations_donor', 'RX_donor', 'PF_donor',
         'oto_score']
 }
+
+
+TRESHOLD_JSON_TS = {'Temp': {'etendue': [0, 50], 'normalite': [0, 50]},
+ 'B.I.S': {'etendue': [0, 100], 'normalite': [0, 100]},
+ 'BIS SR': {'etendue': [0, 100], 'normalite': [0, 100]},
+ 'ETCO2': {'etendue': [0, 120], 'normalite': [0, 120]},
+ 'FiO2': {'etendue': [21, 100], 'normalite': [21, 100]},
+ 'FR': {'etendue': [0, 60], 'normalite': [0, 60]},
+ 'PEEPtotal': {'etendue': [0, 20], 'normalite': [0, 20]},
+ 'Pmax': {'etendue': [0, 65], 'normalite': [0, 65]},
+ 'Pmean': {'etendue': [0, 40], 'normalite': [0, 40]},
+ 'SpO2': {'etendue': [0, 100], 'normalite': [0, 100]},
+ 'SvO2 (m)': {'etendue': [0, 100], 'normalite': [0, 100]},
+ 'VT': {'etendue': [0, 900], 'normalite': [0, 900]},
+ 'DC': {'etendue': [0, 5, 10], 'normalite': [0, 5, 10]},
+ 'FC': {'etendue': [0, 220], 'normalite': [0, 220]},
+ 'PAPdia': {'etendue': [0, 65], 'normalite': [0, 65]},
+ 'PAPmoy': {'etendue': [0, 65], 'normalite': [0, 65]},
+ 'PAPsys': {'etendue': [0, 120], 'normalite': [0, 120]},
+ 'PASd': {'etendue': [0, 80], 'normalite': [0, 80]},
+ 'PASm': {'etendue': [0, 150], 'normalite': [0, 150]},
+ 'PASs': {'etendue': [0, 320], 'normalite': [0, 320]},
+ 'PNId': {'etendue': [0, 80], 'normalite': [0, 80]},
+ 'PNIm': {'etendue': [0, 150], 'normalite': [0, 150]},
+ 'PNIs': {'etendue': [0, 320], 'normalite': [0, 320]}
+                    }
