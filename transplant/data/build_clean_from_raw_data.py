@@ -103,7 +103,10 @@ def clean_dynamic_raw(df_dynamic, df_static):
                    if col.startswith('Unnamed:')]
     df_dynamic = df_dynamic.drop(columns=col_to_drop)
     df_dynamic = df_dynamic.dropna(subset=['foreign_key', 'date'])
-
+    # Drop duplicates rows, we can't have duplicated {patients, timestamp}
+    # See https://github.com/dataforgoodfr/batch_5_transplant/issues/72
+    df_dynamic.drop_duplicates(subset=['foreign_key', 'date', 'time'],
+                               inplace=True)
     # Format dtypes
     df_dynamic = cast_integers(df_dynamic)
 
