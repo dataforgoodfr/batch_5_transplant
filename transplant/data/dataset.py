@@ -31,6 +31,16 @@ class Dataset:
                          STATIC_CATEGORIES['donor'] +
                          STATIC_CATEGORIES['patient_postoperative_filtered'])
 
+        # Drop patient https://github.com/dataforgoodfr/batch_5_transplant/issues/74
+
+        # Drop patient with other_organ_transplantation
+        data = data[data['other_organ_transplantation'] == 0]
+
+        # Dropt patient with only 1 declampage
+        list_patient_1_declampage = \
+            data[data.Heure_declampage_cote2.isna()]['id_patient'].unique()
+        data = data[~data.id_patient.isin(list_patient_1_declampage)]
+
         data = data[list(cols)]
 
         # See https://github.com/dataforgoodfr/batch_5_transplant/blob/master/data/README.md#target
