@@ -7,7 +7,7 @@ from plotly.offline import init_notebook_mode, iplot
 
 
 
-def plot_dynamic_features(df, id_patient, features_list):
+def plot_dynamic_features(df, id_patient, features_list, display_declampage=False):
     """
     Plot a dynamic graph of patient from medical measuring instrument.
     Work only in notebook.
@@ -34,6 +34,16 @@ def plot_dynamic_features(df, id_patient, features_list):
         raise Exception("""'id_patient' must be a int. \n Example id_patient=314""")
     
     data = df[df['id_patient'] == id_patient]
+    
+    if display_declampage == True:
+        # Check if there is a declampage_cote1 event
+        if data.declampage_cote1_done.nunique() > 1: 
+            date_declampage_1 = data[data['declampage_cote1_done'] == 1]['time'].min()
+            declampage_features = [date_declampage_1]
+        # Check if there is a declampage_cote2 event
+        if data.declampage_cote2_done.nunique() > 1: 
+            date_declampage_2 = data[data['declampage_cote2_done'] == 1]['time'].min()
+            declampage_features = [date_declampage_1, date_declampage_2]
     
     if len(data) ==0:
         raise Exception("""No data for this id_patient""")
@@ -62,29 +72,49 @@ def plot_dynamic_features(df, id_patient, features_list):
             raise Exception("""No numeric data is this DataFrame""")
         
         # Create trace for data_graph
+        max_y_value = 0 # Looking for max Y value
         for feature in features_list_clean:
             trace = go.Scatter(x=time,
                         y=data[feature].values,
                         name = feature,
                         yaxis='y1')
             data_graph.append(trace) 
+            
+            if max_y_value < data[feature].max():
+                max_y_value = data[feature].max()
     else:
         raise Exception("""No data for this id_patient""")
         
     # Design graph
     layout = dict(
-	    title='Analyse du patient ' + str(id_patient),
-	    xaxis=dict(
-	        rangeslider=dict(
-	            visible = True
-	        ),
-	        type='date'
-	    ),
-	    yaxis=dict(
-	        title='Mesures'
-	    )
-	)
-
+        title='Analyse du patient ' + str(id_patient),
+        xaxis=dict(
+            rangeslider=dict(
+                visible = True
+            ),
+            type='date'
+        ),
+        yaxis=dict(
+            title='Mesures'
+        )
+    )
+    
+    if display_declampage == True:
+        shapes = []
+        for i in range(0, len(declampage_features)):
+            shapes.append({
+                            'type': 'line',
+                            'x0': declampage_features[i],
+                            'y0': 0,
+                            'x1': declampage_features[i],
+                            'y1': max_y_value,
+                            'line': {
+                                'color': 'black',
+                                'dash' : 'dot',
+                                'width': 2}
+            })
+        layout['shapes'] = shapes
+    
     fig = dict(data=data_graph, layout=layout)
     iplot(fig)
 
