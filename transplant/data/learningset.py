@@ -117,7 +117,7 @@ class Learningset:
 
 ## get_data_merged_dynamic_flatten_full
 
-    def get_data_merged_dynamic_flatten_full(self, target_format="cls", centered_reduced=False):
+    def get_data_merged_dynamic_flatten_full(self, target_format="cls", centered_reduced=False, full_df=False):
         
         from transplant.data.learningset import Learningset
         learningset = Learningset()
@@ -196,7 +196,9 @@ class Learningset:
     
             train_glob_0, test_glob_0 = merge_dyn_sta(train_glob_0, train_dynamic_flat, test_glob_0, test_dynamic_flat)
     
-
+        
+        if full_df :
+            return train_glob_0, test_glob_0
         
         def center_reduce_data(W_train, W_test):
             mean_train = W_train.mean()
