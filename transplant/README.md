@@ -9,6 +9,8 @@ La classe `Dataset` vous permet d'accéder aux données statiques et dynamiques 
 _Variables_
 
 - **time_offset**: Détermine le moment (en minutes) auquel les données dynamiques seront tronquées. Par exemple, un `time_offset` à 30 signifie que les données dynamiques seront arrêtées 30 minutes avant la dernière mesure enregistrée par les instruments de mesure.
+- **smooth**: `True / False` détermine si les données dynamiques doivent être lissées. 
+- **smooth_periods**: `Int` nombre de périodes sur lesquelles la fonction smooth est appliquée. Fixé à 5 périodes par défaut.
 
 _Fonctions_
 
