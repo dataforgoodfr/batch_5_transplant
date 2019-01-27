@@ -63,6 +63,9 @@ class Dataset:
 
         df = df[DYNAMIC_HEADERS]
 
+        # create bool event on declampage
+        df = self._get_declampage_event(df)
+
         # Truncate dynamic file to time_offset before end of operation
 
         df = df.groupby('id_patient').apply(self._truncate_datetime)
@@ -90,3 +93,88 @@ class Dataset:
     def _truncate_datetime(self, df):
         date_max = df.time.max() - timedelta(minutes=self.time_offset)
         return df[df.time <= date_max]
+
+    def _get_declampage_event(self, df):
+        """
+        Create Bool features on event declampage_cote1 & declampage_cote2 from
+        Static Dataset
+
+        - Input : df : [DataFrame] : dynmaic DataFrame
+        - Ouput : df : [DataFrame] : dynmaic DataFrame + declampage_cote1_done &
+                                     declampage_cote2_done
+        """
+
+        df_static = pd.read_csv(PATH_STATIC_CLEAN, 
+                                usecols=['id_patient', 'Heure_declampage_cote1', 
+                                'Heure_declampage_cote2', 'date_transplantation',
+                                'heure_arrivee_bloc']
+                                )
+
+        # Concat Date + heure begin of operaiton
+        df_static['date_debut_operation'] = pd.to_datetime(df_static['date_transplantation'] + 
+                                                           ' ' + 
+                                                           df_static['heure_arrivee_bloc'])
+
+        # Merging on id_patient
+        df = df.merge(df_static, on='id_patient', how='left')
+
+        # Add date to time for declampage_cote
+        df['Heure_declampage_cote1'] = pd.to_datetime(df['time'].dt.strftime("%Y-%m-%d") + 
+                                                      ' ' + 
+                                                      df['Heure_declampage_cote1'])
+        df['Heure_declampage_cote2'] = pd.to_datetime(df['time'].dt.strftime("%Y-%m-%d") + 
+                                                      ' ' + 
+                                                      df['Heure_declampage_cote2'])
+
+        # Create event features
+        ## declampage_cote1_done
+        df['declampage_cote1_done'] = 0
+        df.loc[(df['Heure_declampage_cote1'] <= df['time']) & 
+               (df['Heure_declampage_cote1'] > df['date_debut_operation']), 
+               'declampage_cote1_done'] = 1
+
+        # Fix declampage_cote1_done to 0 because new day after heure
+        # declampage 1.
+        max_date_declampage_1_by_patient = \
+            df[df.declampage_cote1_done == 1].groupby('id_patient',
+                                                        as_index=False)['time'].max()
+        max_date_declampage_1_by_patient.columns = ['id_patient', 'max_date_declampage_1']
+
+        df = df.merge(max_date_declampage_1_by_patient, 
+                      on='id_patient', 
+                      how='inner')
+
+        df.loc[(df['declampage_cote1_done'] == 0) & 
+               (df['time'] > df['max_date_declampage_1']), 
+                'declampage_cote1_done'] = 1
+
+        ## declampage_cote2_done
+        df['declampage_cote2_done'] = 0
+        df.loc[(df['Heure_declampage_cote2'] <= df['time']) &
+               (df['Heure_declampage_cote2'] > df['date_debut_operation']), 
+               'declampage_cote2_done'] = 1
+
+        # Fix declampage_cote2_done to 0 because new day after heure
+        # declampage 2.
+        max_date_declampage_2_by_patient = \
+            df[df.declampage_cote2_done == 1].groupby('id_patient',
+                                                        as_index=False)['time'].max()
+        max_date_declampage_2_by_patient.columns = ['id_patient', 'max_date_declampage_2']
+
+        df = df.merge(max_date_declampage_2_by_patient, 
+                      on='id_patient', 
+                      how='left')
+
+        df.loc[(df['declampage_cote2_done'] == 0) & 
+               (df['time'] > df['max_date_declampage_2']), 
+                'declampage_cote2_done'] = 1
+
+
+        # Drop non usefull column
+        df.drop(['Heure_declampage_cote1', 'Heure_declampage_cote2', 
+                'date_debut_operation', 'date_transplantation', 
+                'heure_arrivee_bloc', 'max_date_declampage_1',
+                'max_date_declampage_2'], 
+                axis=1, inplace=True)
+
+        return df
