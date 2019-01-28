@@ -77,7 +77,7 @@ class Dataset:
 
         # Truncate dynamic file to time_offset before end of operation
 
-        df = df.groupby('id_patient').apply(self._truncate_datetime)
+        df = df.groupby('id_patient').apply(self._truncate_datetime).reset_index(drop=True)
 
         # Filter result based on static set
 
