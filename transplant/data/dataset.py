@@ -1,12 +1,10 @@
 import pandas as pd
 import numpy as np
-import datetime
 from datetime import timedelta
 from sklearn.model_selection import train_test_split
 
 from transplant.config import (PATH_STATIC_CLEAN, PATH_DYNAMIC_CLEAN,
-                               STATIC_CATEGORIES, DYNAMIC_CATEGORIES,
-                               DYNAMIC_HEADERS)
+                               STATIC_CATEGORIES, DYNAMIC_HEADERS)
 
 
 class Dataset:
@@ -31,6 +29,16 @@ class Dataset:
                          STATIC_CATEGORIES['donor'] +
                          STATIC_CATEGORIES['patient_postoperative_filtered'])
 
+        # Drop patient https://github.com/dataforgoodfr/batch_5_transplant/issues/74
+
+        # Drop patient with other_organ_transplantation
+        data = data[data['other_organ_transplantation'] == 0]
+
+        # Dropt patient with only 1 declampage
+        list_patient_1_declampage = \
+            data[data.Heure_declampage_cote2.isna()]['id_patient'].unique()
+        data = data[~data.id_patient.isin(list_patient_1_declampage)]
+
         data = data[list(cols)]
 
         # See https://github.com/dataforgoodfr/batch_5_transplant/blob/master/data/README.md#target
@@ -43,9 +51,9 @@ class Dataset:
 
         # Success B
         idx_successB = (data.immediate_extubation == 0) & \
-                        (data.secondary_intubation == 0) & \
-                        (data.LOS_first_ventilation < 2) & \
-                        (data.Survival_days_27_10_2018 >= 2)
+                       (data.secondary_intubation == 0) & \
+                       (data.LOS_first_ventilation < 2) & \
+                       (data.Survival_days_27_10_2018 >= 2)
         data.loc[idx_successA | idx_successB, 'target'] = 1
 
         # Drop post_operation variables
@@ -59,7 +67,8 @@ class Dataset:
 
         df = pd.read_csv(PATH_DYNAMIC_CLEAN, parse_dates=['time'])
 
-        # Only filter columns in Dynamic Header, see https://github.com/dataforgoodfr/batch_5_transplant/issues/42
+        # Only filter columns in Dynamic Header,
+        # see https://github.com/dataforgoodfr/batch_5_transplant/issues/42
 
         df = df[DYNAMIC_HEADERS]
 
@@ -100,81 +109,84 @@ class Dataset:
         Static Dataset
 
         - Input : df : [DataFrame] : dynmaic DataFrame
-        - Ouput : df : [DataFrame] : dynmaic DataFrame + declampage_cote1_done &
-                                     declampage_cote2_done
+        - Ouput : df : [DataFrame] : dynmaic DataFrame + declampage_cote1_done
+                                    & declampage_cote2_done
         """
 
-        df_static = pd.read_csv(PATH_STATIC_CLEAN, 
-                                usecols=['id_patient', 'Heure_declampage_cote1', 
-                                'Heure_declampage_cote2', 'date_transplantation',
-                                'heure_arrivee_bloc']
+        df_static = pd.read_csv(PATH_STATIC_CLEAN,
+                                usecols=['id_patient',
+                                         'Heure_declampage_cote1',
+                                         'Heure_declampage_cote2',
+                                         'date_transplantation',
+                                         'heure_arrivee_bloc']
                                 )
 
         # Concat Date + heure begin of operaiton
-        df_static['date_debut_operation'] = pd.to_datetime(df_static['date_transplantation'] + 
-                                                           ' ' + 
-                                                           df_static['heure_arrivee_bloc'])
+        df_static['date_debut_operation'] = \
+            pd.to_datetime(df_static['date_transplantation'] +
+                ' ' + df_static['heure_arrivee_bloc'])
 
         # Merging on id_patient
         df = df.merge(df_static, on='id_patient', how='left')
 
         # Add date to time for declampage_cote
-        df['Heure_declampage_cote1'] = pd.to_datetime(df['time'].dt.strftime("%Y-%m-%d") + 
-                                                      ' ' + 
-                                                      df['Heure_declampage_cote1'])
-        df['Heure_declampage_cote2'] = pd.to_datetime(df['time'].dt.strftime("%Y-%m-%d") + 
-                                                      ' ' + 
-                                                      df['Heure_declampage_cote2'])
+        df['Heure_declampage_cote1'] = \
+            pd.to_datetime(df['time'].dt.strftime("%Y-%m-%d") +
+                ' ' + df['Heure_declampage_cote1'])
+        df['Heure_declampage_cote2'] = \
+            pd.to_datetime(df['time'].dt.strftime("%Y-%m-%d") +
+                ' ' + df['Heure_declampage_cote2'])
 
         # Create event features
-        ## declampage_cote1_done
+        # declampage_cote1_done
         df['declampage_cote1_done'] = 0
-        df.loc[(df['Heure_declampage_cote1'] <= df['time']) & 
-               (df['Heure_declampage_cote1'] > df['date_debut_operation']), 
+        df.loc[(df['Heure_declampage_cote1'] <= df['time']) &
+               (df['Heure_declampage_cote1'] > df['date_debut_operation']),
                'declampage_cote1_done'] = 1
 
         # Fix declampage_cote1_done to 0 because new day after heure
         # declampage 1.
         max_date_declampage_1_by_patient = \
             df[df.declampage_cote1_done == 1].groupby('id_patient',
-                                                        as_index=False)['time'].max()
-        max_date_declampage_1_by_patient.columns = ['id_patient', 'max_date_declampage_1']
+                                                      as_index=False)['time'].max()
+        max_date_declampage_1_by_patient.columns = \
+            ['id_patient', 'max_date_declampage_1']
 
-        df = df.merge(max_date_declampage_1_by_patient, 
-                      on='id_patient', 
+        df = df.merge(max_date_declampage_1_by_patient,
+                      on='id_patient',
                       how='inner')
 
-        df.loc[(df['declampage_cote1_done'] == 0) & 
-               (df['time'] > df['max_date_declampage_1']), 
-                'declampage_cote1_done'] = 1
+        df.loc[(df['declampage_cote1_done'] == 0) &
+               (df['time'] > df['max_date_declampage_1']),
+               'declampage_cote1_done'] = 1
 
-        ## declampage_cote2_done
+        # declampage_cote2_done
         df['declampage_cote2_done'] = 0
         df.loc[(df['Heure_declampage_cote2'] <= df['time']) &
-               (df['Heure_declampage_cote2'] > df['date_debut_operation']), 
+               (df['Heure_declampage_cote2'] > df['date_debut_operation']),
                'declampage_cote2_done'] = 1
 
         # Fix declampage_cote2_done to 0 because new day after heure
         # declampage 2.
         max_date_declampage_2_by_patient = \
             df[df.declampage_cote2_done == 1].groupby('id_patient',
-                                                        as_index=False)['time'].max()
-        max_date_declampage_2_by_patient.columns = ['id_patient', 'max_date_declampage_2']
+                                                      as_index=False)['time'].max()
+        max_date_declampage_2_by_patient.columns = \
+            ['id_patient', 'max_date_declampage_2']
 
-        df = df.merge(max_date_declampage_2_by_patient, 
-                      on='id_patient', 
+        df = df.merge(max_date_declampage_2_by_patient,
+                      on='id_patient',
                       how='left')
 
-        df.loc[(df['declampage_cote2_done'] == 0) & 
-               (df['time'] > df['max_date_declampage_2']), 
-                'declampage_cote2_done'] = 1
-
+        df.loc[(df['declampage_cote2_done'] == 0) &
+               (df['time'] > df['max_date_declampage_2']),
+               'declampage_cote2_done'] = 1
 
         # Drop non usefull column
-        df.drop(['Heure_declampage_cote1', 'Heure_declampage_cote2', 
-                'date_debut_operation', 'date_transplantation', 
-                'heure_arrivee_bloc', 'max_date_declampage_1',
-                'max_date_declampage_2'], 
+        df.drop(['Heure_declampage_cote1', 'Heure_declampage_cote2',
+                 'date_debut_operation', 'date_transplantation',
+                 'heure_arrivee_bloc', 'max_date_declampage_1',
+                 'max_date_declampage_2'],
                 axis=1, inplace=True)
 
         return df
