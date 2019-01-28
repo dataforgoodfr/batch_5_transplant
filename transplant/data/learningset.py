@@ -130,19 +130,21 @@ class Learningset:
         test_dynamic_0 = test_dynamic_0.fillna(0)
         
         def add_start_end_length_op_to_static(X_stat, X_dyn):
+            X_dyn.index.names=['index',None]
+            X_stat.index.names=['index']
             grouped_time = X_dyn.groupby(['id_patient'])['time']
-
+            
             time_start_df = grouped_time.first().to_frame()
             time_start_df.columns = ['start_operation']
-            time_start_df['id_patient'] = time_start_df.index
+            #time_start_df['id_patient'] = time_start_df.index
 
-            X_return = pd.merge(X_stat, time_start_df, on='id_patient')
+            X_return = pd.merge(X_stat, time_start_df, on='id_patient',right_index=True)
 
             time_ends_df = grouped_time.last().to_frame()
             time_ends_df.columns = ['ends_operation']
-            time_ends_df['id_patient'] = time_ends_df.index
+            #time_ends_df['id_patient'] = time_ends_df.index
 
-            X_return = pd.merge(X_return, time_ends_df, on='id_patient')
+            X_return = pd.merge(X_return, time_ends_df, on='id_patient',right_index=True)
 
             X_return['length_op'] = (X_return['ends_operation'] - X_return['start_operation']).apply(lambda x: x.seconds//60)
             
