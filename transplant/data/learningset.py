@@ -130,8 +130,8 @@ class Learningset:
         test_dynamic_0 = test_dynamic_0.fillna(0)
         
         def add_start_end_length_op_to_static(X_stat, X_dyn):
-            X_dyn.index.names=['index',None]
-            X_stat.index.names=['index']
+            #X_dyn.index.names=['index',None]
+            #X_stat.index.names=['index']
             grouped_time = X_dyn.groupby(['id_patient'])['time']
             
             time_start_df = grouped_time.first().to_frame()
