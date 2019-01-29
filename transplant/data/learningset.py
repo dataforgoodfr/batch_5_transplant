@@ -117,7 +117,7 @@ class Learningset:
 
 ## get_data_merged_dynamic_flatten_full
 
-    def get_data_merged_dynamic_flatten_full(self, target_format="cls", centered_reduced=False):
+    def get_data_merged_dynamic_flatten_full(self, target_format="cls", centered_reduced=False, full_df=False):
         
         from transplant.data.learningset import Learningset
         learningset = Learningset()
@@ -130,19 +130,21 @@ class Learningset:
         test_dynamic_0 = test_dynamic_0.fillna(0)
         
         def add_start_end_length_op_to_static(X_stat, X_dyn):
+            X_dyn.index.names=['index',None]
+            X_stat.index.names=['index']
             grouped_time = X_dyn.groupby(['id_patient'])['time']
-
+            
             time_start_df = grouped_time.first().to_frame()
             time_start_df.columns = ['start_operation']
-            time_start_df['id_patient'] = time_start_df.index
+            #time_start_df['id_patient'] = time_start_df.index
 
-            X_return = pd.merge(X_stat, time_start_df, on='id_patient')
+            X_return = pd.merge(X_stat, time_start_df, on='id_patient',right_index=True)
 
             time_ends_df = grouped_time.last().to_frame()
             time_ends_df.columns = ['ends_operation']
-            time_ends_df['id_patient'] = time_ends_df.index
+            #time_ends_df['id_patient'] = time_ends_df.index
 
-            X_return = pd.merge(X_return, time_ends_df, on='id_patient')
+            X_return = pd.merge(X_return, time_ends_df, on='id_patient',right_index=True)
 
             X_return['length_op'] = (X_return['ends_operation'] - X_return['start_operation']).apply(lambda x: x.seconds//60)
             
@@ -196,7 +198,8 @@ class Learningset:
     
             train_glob_0, test_glob_0 = merge_dyn_sta(train_glob_0, train_dynamic_flat, test_glob_0, test_dynamic_flat)
     
-
+        if full_df :
+            return train_glob_0, test_glob_0
         
         def center_reduce_data(W_train, W_test):
             mean_train = W_train.mean()
