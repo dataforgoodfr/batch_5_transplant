@@ -171,7 +171,7 @@ def clean_dynamic_raw(df_dynamic, df_static):
                  'heure_transfert_rea'])
 
     # Checks
-    assert (df_dynamic_transplant.id_patient.dtypes == 'int'),\
+    assert (df_dynamic_transplant.id_patient.dtypes == 'int64'),\
         "TypeError: Inconsistency in parsed dynamic data: id_patient not int"
 
     return df_dynamic_transplant
