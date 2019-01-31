@@ -19,9 +19,7 @@ SPLITTER_INIT_FEATURE = {
                          'PAPD_initiale': 'PAPdia',
                          'PEEP_initial': 'PEEPtotal',
                          'VT_initial': 'VT'
-                         # 'SpO2' Pas de SpO2 initial ?
                          }
-# PAO2 / FIO2 idée de features métier
 
 # List des valeurs null en init ou dans les dynamiques :
 # B.I.S_post_auc     103
@@ -37,7 +35,6 @@ SPLITTER_DYNA_FEATURE_LIST = ['ETCO2',
                               'Temp', 'B.I.S', 'BIS SR',
                               # 'PNIs'
                               # 'SpO2'
-                              #
                               ]
 
 # Create a dict automatically based on SPLITTER_DYNA_FEATURE_LIST
