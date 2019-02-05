@@ -2,6 +2,10 @@ import pandas as pd
 import numpy as np
 
 from transplant.data.dataset import Dataset
+from transplant.features.auc_features import run_auc_feature
+from transplant.data.splitter_config import SPLITTER_AUC_FEATURE
+from transplant.data.splitter import make_split_operation
+
 dataset = Dataset()
 
 # Usefull functions
@@ -93,6 +97,59 @@ def get_timeseries_in_array(X_stat, X_dyn, dyn_to_drop=['id_patient', 'time']):
     return X_return
 
 
+def get_auc_features(train_glob_0, test_glob_0, fillna_auc):
+        """
+        Split dynamic's data into 3 DataFrame (splitter)
+        Calcul AUC features
+        Merge AUC features with train_glob_0 & test_glob_0
+        Input :
+            - train_glob_0 [DataFrame]: trainning dynamic's data
+            - test_glob_0 [DataFrame]: trainning dynamic's data
+            - fillna_auc [bool]: If True then fillna auc features
+        Ouput :
+            - train_glob_0 [DataFrame]: trainning dynamic's & AUC
+            - test_glob_0 [DataFrame]: trainning dynamic's & AUC
+        """
+
+        # Dynamic's data
+        train_dyna, test_dyna = dataset.get_dynamic()
+        dynamic_df = pd.concat([train_dyna, test_dyna])
+
+        # Static's data
+        train_stat, test_stat = dataset.get_static()
+        static_df = pd.concat([train_stat, test_stat])
+
+        # Create 3 DataFrames with splitters. You can change config
+        # duration of each DataFrames with arguments
+        baseline_data_df, pre_declampage_df, post_declampage_df = \
+            make_split_operation(dynamic_df, baseline_duration=90,
+                                 pre_duration=90,
+                                 post_chir_duration=20)
+
+        # AUC cacul from transplant/features/auc_features.py
+        post_auc_feature = run_auc_feature(post_declampage_df,
+                                           baseline_data_df,
+                                           static_df, SPLITTER_AUC_FEATURE,
+                                           type_split='post', normalize=True)
+        pre_auc_feature = run_auc_feature(pre_declampage_df,
+                                          baseline_data_df,
+                                          static_df, SPLITTER_AUC_FEATURE,
+                                          type_split='pre', normalize=True)
+        # To fill NaN value with 0
+        if fillna_auc:
+            post_auc_feature.fillna(0, inplace=True)
+            pre_auc_feature.fillna(0, inplace=True)
+
+        # Merging result with learningset train & test
+        train_glob_0 = train_glob_0.merge(post_auc_feature, on='id_patient')
+        train_glob_0 = train_glob_0.merge(pre_auc_feature, on='id_patient')
+
+        test_glob_0 = test_glob_0.merge(post_auc_feature, on='id_patient')
+        test_glob_0 = test_glob_0.merge(pre_auc_feature, on='id_patient')
+
+        return train_glob_0, test_glob_0
+
+
 class Learningset:
 
     # get_static_filled
@@ -131,7 +188,7 @@ class Learningset:
                 drop_train += [i]
 
         for i in test_static_columns:
-            if not(i in train_static_filled.columns):
+            if not(i in train_static_columns):
                 drop_test += [i]
 
         train_static_filled = train_static_filled.drop(drop_train, axis=1)
@@ -141,6 +198,7 @@ class Learningset:
 
     def get_data_merged_dynamic_flatten_full(self, target_format="cls",
                                              centered_reduced=False,
+                                             fillna_auc=False,
                                              full_df=False):
         """
         get_data_merged_dynamic_flatten_full
@@ -205,6 +263,10 @@ class Learningset:
                                                       test_glob_0,
                                                       test_dynamic_flat)
 
+        # Get AUC Features
+        train_glob_0, test_glob_0 = \
+            get_auc_features(train_glob_0, test_glob_0, fillna_auc)
+
         if full_df:
             return train_glob_0, test_glob_0
 
@@ -240,7 +302,9 @@ class Learningset:
                    y_train_hot, y_test_hot, \
                    train_glob_0.drop(['target'], axis=1).columns
 
-    def get_data_merged_dynamic(self, target_format="cls", full_df=False):
+    def get_data_merged_dynamic(self, target_format="cls",
+                                fillna_auc=False,
+                                full_df=False):
         """
         get_data_merged_dynamic
         """
@@ -265,6 +329,10 @@ class Learningset:
         # Merge static and dynamic with full time series
         train_glob = get_timeseries_in_array(train_static_1, train_dynamic_0)
         test_glob = get_timeseries_in_array(test_static_1, test_dynamic_0)
+
+        # Get AUC Features
+        train_glob, test_glob = \
+            get_auc_features(train_glob, test_glob, fillna_auc)
 
         if full_df:
             return train_glob, test_glob
