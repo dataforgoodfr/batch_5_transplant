@@ -33,6 +33,7 @@ SPLITTER_INIT_FEATURE = {
 SPLITTER_DYNA_FEATURE_LIST = ['ETCO2',
                               # 'PAPS',
                               'Temp', 'B.I.S', 'BIS SR',
+                              'SpO2_by_FiO2',
                               # 'PNIs'
                               # 'SpO2'
                               ]

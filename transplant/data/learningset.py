@@ -5,6 +5,7 @@ from transplant.data.dataset import Dataset
 from transplant.features.auc_features import run_auc_feature
 from transplant.data.splitter_config import SPLITTER_AUC_FEATURE
 from transplant.data.splitter import make_split_operation
+from transplant.features.advanced_features import make_advanced_feature
 
 dataset = Dataset()
 
@@ -99,6 +100,7 @@ def get_timeseries_in_array(X_stat, X_dyn, dyn_to_drop=['id_patient', 'time']):
 
 def get_auc_features(train_glob_0, test_glob_0, fillna_auc):
         """
+        Add advanced features on dynamic's data
         Split dynamic's data into 3 DataFrame (splitter)
         Calcul AUC features
         Merge AUC features with train_glob_0 & test_glob_0
@@ -148,6 +150,28 @@ def get_auc_features(train_glob_0, test_glob_0, fillna_auc):
         test_glob_0 = test_glob_0.merge(pre_auc_feature, on='id_patient')
 
         return train_glob_0, test_glob_0
+
+
+def get_advanced_features(train_glob_0, test_glob_0):
+    """
+    Call make_advanced_feature form features.advanced_features.py
+
+    Add advanced features to dynamic's data
+    Input :
+        - train_glob_0 [DataFrame] trainning
+        - test_glob_0 [DataFrame] test
+    Ouput :
+        - train_glob_0 [DataFrame] with advanced features
+        - test_glob_0 [DataFrame] with advanced features
+    """
+
+    train_glob_0_adv = make_advanced_feature(train_glob_0)
+    test_glob_0_adv = make_advanced_feature(test_glob_0)
+
+    train_glob_0 = train_glob_0.merge(train_glob_0_adv, on='id_patient')
+    test_glob_0 = test_glob_0.merge(test_glob_0_adv, on='id_patient')
+
+    return train_glob_0, test_glob_0
 
 
 class Learningset:
@@ -263,6 +287,10 @@ class Learningset:
                                                       test_glob_0,
                                                       test_dynamic_flat)
 
+        # Get Advanced Features
+        train_glob_0, test_glob_0 = \
+            get_advanced_features(train_glob_0, test_glob_0)
+
         # Get AUC Features
         train_glob_0, test_glob_0 = \
             get_auc_features(train_glob_0, test_glob_0, fillna_auc)
@@ -329,6 +357,10 @@ class Learningset:
         # Merge static and dynamic with full time series
         train_glob = get_timeseries_in_array(train_static_1, train_dynamic_0)
         test_glob = get_timeseries_in_array(test_static_1, test_dynamic_0)
+
+        # Get Advanced Features
+        train_glob, test_glob = \
+            get_advanced_features(train_glob, test_glob)
 
         # Get AUC Features
         train_glob, test_glob = \
