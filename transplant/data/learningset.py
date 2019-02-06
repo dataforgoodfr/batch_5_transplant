@@ -222,6 +222,7 @@ class Learningset:
 
     def get_data_merged_dynamic_flatten_full(self, target_format="cls",
                                              centered_reduced=False,
+                                             fillna_original=False,
                                              fillna_auc=False,
                                              full_df=False):
         """
@@ -235,9 +236,10 @@ class Learningset:
         train_static_0, test_static_0 = learningset.get_static_filled()
         train_dynamic_0, test_dynamic_0 = dataset.get_dynamic()
 
-        # On remplace les Nan par des 0 dans dynamic
-        train_dynamic_0 = train_dynamic_0.fillna(0)
-        test_dynamic_0 = test_dynamic_0.fillna(0)
+        if fillna_original:
+            # On remplace les Nan par des 0 dans dynamic
+            train_dynamic_0 = train_dynamic_0.fillna(0)
+            test_dynamic_0 = test_dynamic_0.fillna(0)
 
         # On obtient entre autre la longueur de l'opération
         train_static_1 = add_start_end_length_op_to_static(train_static_0,
