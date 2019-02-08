@@ -321,8 +321,8 @@ class Learningset:
         dict_auc_features = get_auc_dict_features(train_glob_0)
         train_glob_0 = calcul_pct_on_pre_post(train_glob_0,
                                               dict_auc_features)
-        test_glob_0 = calcul_pct_on_pre_post(train_glob_0,
-                                             test_glob_0)
+        test_glob_0 = calcul_pct_on_pre_post(test_glob_0,
+                                             dict_auc_features)
 
         if full_df:
             return train_glob_0, test_glob_0
