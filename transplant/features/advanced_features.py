@@ -1,6 +1,26 @@
 import pandas as pd
 
 
+def get_len_of_windows_by_patient(df_window, df, type_split):
+    """
+    Count number of row (minute) of windows operation
+    (pre & post declampage) by patient
+    Input :
+        - df_window [DataFrame]: pre or post dataframe
+        - df [DataFrame]: Your train or test set
+        - type_split [str]: for your new feature duration_TYPE_SPLIT
+            (pre or post)
+    """
+
+    # Count number of row by patient
+    grp_windows_by_patient = \
+        df_window.groupby('id_patient',
+                          as_index=False)['time'].count()
+    grp_windows_by_patient.columns = ['id_patient', 'duration_'+type_split]
+    df = df.merge(grp_windows_by_patient, on='id_patient', how='left')
+    return df
+
+
 def create_nb_nan(df, advanced_features_list):
     """
     Calcul for each patient number of variable missing (NaN)
