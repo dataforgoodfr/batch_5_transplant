@@ -72,6 +72,11 @@ class Dataset:
 
         df = df[DYNAMIC_HEADERS]
 
+        # create features
+        df['SpO2_by_FiO2'] = df['SpO2'] / df['FiO2']
+        # Replace inf value (FiO2 à 0) par 1 (valeur normale)
+        df['SpO2_by_FiO2'] = df['SpO2_by_FiO2'].replace([np.inf, -np.inf], 1)
+
         # create bool event on declampage
         df = self._get_declampage_event(df)
 
