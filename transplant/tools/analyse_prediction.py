@@ -59,24 +59,40 @@ def get_info_patient_operation(id_patient):
             print("Survival_days_27_10_2018 : " + str(var_survival))
 
 
-def analyse_prediction(model, X_test, y_test, features_list):
+def analyse_prediction(X_test, y_test, features_list,
+                       model='', pred=None, proba=None):
     """
     Return prediction (Bool + proba) & target.
+    If model is '', you have to fill pred and proba argument
+    else model will predict value
     Input :
-        - Model [Scikit.estimator]: model already fit
         - X_test [DataFrame]: Test set (with all data) to get id_patient
         - y_test [pandas.Serie]: target of our test set
         - features_list [list]: list of feature to predict result
+        - Model [Scikit.estimator]: model already fit
+        - pred [Pandas.Serie]: Serie of prediction (0/1)
+        - prob [Pandas.Serie]: Serie of proba [0:1]
     Ouput :
         - result [DataFrame]: with all features (original)
             - Prediction of our model
             - Probability of our model
             - Our target (reality)
     """
-    patient_list = X_test['id_patient']
-    result = X_test[features_list].copy()
-    result['prediction'] = model.predict(X_test)
-    result['proba'] = model.predict_proba(X_test)[:, 1]
-    result['target'] = y_test
-    result['id_patient'] = patient_list
-    return result
+    if model != '':
+        patient_list = X_test['id_patient']
+        result = X_test[features_list].copy()
+        pred = model.predict(result)
+        proba = model.predict_proba(result)[:, 1]
+        result['prediction'] = pred
+        result['proba'] = proba
+        result['target'] = y_test
+        result['id_patient'] = patient_list
+        return result
+    else:
+        patient_list = X_test['id_patient']
+        result = X_test[features_list].copy()
+        result['prediction'] = pred
+        result['proba'] = proba[:, 1]
+        result['target'] = y_test
+        result['id_patient'] = patient_list
+        return result

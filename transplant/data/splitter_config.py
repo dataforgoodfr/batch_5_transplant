@@ -35,6 +35,8 @@ SPLITTER_DYNA_FEATURE_LIST = ['ETCO2',
                               'Temp',
                               'B.I.S', 'BIS SR',
                               'SpO2_by_FiO2',
+                              'PASs_minus_PASd',
+                              'PAPsys_minus_PAPdia',
                               # 'PNIs'
                               # 'SpO2'
                               ]
