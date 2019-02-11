@@ -53,7 +53,7 @@ def get_auc_feature(df, df_static, baseline_data_df,
     """
     data_list = []
     for patient in df['id_patient'].unique():
-        temp = df[df.id_patient == patient][feature_name]
+        temp = df[df.id_patient == patient][feature_name].dropna()
 
         # If init feature exist in static's data
         if init_feature_name in df_static.columns:
