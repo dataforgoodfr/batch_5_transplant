@@ -165,3 +165,28 @@ STATIC_CATEGORIES = {
         'Tabagisme_donor', 'Aspirations_donor', 'RX_donor', 'PF_donor',
         'oto_score']
 }
+
+MODEL_FEATURES = ['Aspirations_donor', 'Insuffisance_renale', 'PAPS', 'PFO',
+                  'Poids_donor', 'Sex_donor', 'Taille', 'diabetes', 'oto_score',
+                  'pathologie', 'plasmapherese', 'preoperative_ECMO',
+                  'preoperative_ICU', 'preoperative_mechanical_ventilation',
+                  'preoperative_pulmonary_hypertension',
+                  'preoperative_vasopressor', 'retransplant', 'sexe',
+                  'super_urgence', 'thoracic_surgery_history',
+                  'time_on_waiting_liste',
+                  'transplanted_twice_during_study_period',
+                  'length_op', 'PASs_mean', 'PNId_mean', 'PNIs_mean',
+                  'SpO2_mean', 'SvO2 (m)_mean', 'VT_mean', 'B.I.S_std',
+                  'DC_std', 'PNId_std', 'PNIs_std', 'SpO2_std', 'SvO2 (m)_std',
+                  'B.I.S_max', 'BIS SR_max', 'DC_max', 'FiO2_max', 'PAPdia_max',
+                  'PAPmoy_max', 'Pmax_max', 'SpO2_max', 'SvO2 (m)_max',
+                  'B.I.S_min', 'BIS SR_min', 'DC_min', 'ETCO2_min', 'FC_min',
+                  'FR_min', 'PAPdia_min', 'PAPmoy_min', 'PAPsys_min',
+                  'PASd_min', 'PASm_min', 'PASs_min', 'PEEPtotal_min',
+                  'PNId_min', 'PNIm_min', 'PNIs_min', 'Pmax_min', 'Pmean_min',
+                  'SpO2_min', 'SvO2 (m)_min', 'Temp_min', 'VT_min',
+                  'SpO2_by_FiO2_min', 'PASs_minus_PASd_min',
+                  'PAPsys_minus_PAPdia_min', 'count_NaN',
+                  'PAPsys_minus_PAPdia_pre_auc', 'PASs_minus_PASd_pre_auc',
+                  'duration_post', 'duration_pre', 'BIS SR_pct_pre_post',
+                  'SpO2_by_FiO2_pct_pre_post', 'PAPdia_pct_pre_post']

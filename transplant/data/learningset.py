@@ -5,7 +5,10 @@ from transplant.data.dataset import Dataset
 from transplant.features.auc_features import run_auc_feature
 from transplant.data.splitter_config import SPLITTER_AUC_FEATURE
 from transplant.data.splitter import make_split_operation
-from transplant.features.advanced_features import make_advanced_feature
+from transplant.features.advanced_features import (make_advanced_feature,
+                                                   get_len_of_windows_by_patient,
+                                                   get_auc_dict_features,
+                                                   calcul_pct_on_pre_post)
 
 dataset = Dataset()
 
@@ -104,6 +107,8 @@ def get_auc_features(train_glob_0, test_glob_0, fillna_auc):
         Split dynamic's data into 3 DataFrame (splitter)
         Calcul AUC features
         Merge AUC features with train_glob_0 & test_glob_0
+        Count number of minute of windows operation by patient
+            (get_len_of_windows_by_patient())
         Input :
             - train_glob_0 [DataFrame]: trainning dynamic's data
             - test_glob_0 [DataFrame]: trainning dynamic's data
@@ -148,6 +153,20 @@ def get_auc_features(train_glob_0, test_glob_0, fillna_auc):
 
         test_glob_0 = test_glob_0.merge(post_auc_feature, on='id_patient')
         test_glob_0 = test_glob_0.merge(pre_auc_feature, on='id_patient')
+
+        # Get duration of windows operation by patient
+        train_glob_0 = get_len_of_windows_by_patient(post_declampage_df,
+                                                     train_glob_0,
+                                                     type_split='post')
+        train_glob_0 = get_len_of_windows_by_patient(pre_declampage_df,
+                                                     train_glob_0,
+                                                     type_split='pre')
+        test_glob_0 = get_len_of_windows_by_patient(post_declampage_df,
+                                                    test_glob_0,
+                                                    type_split='post')
+        test_glob_0 = get_len_of_windows_by_patient(pre_declampage_df,
+                                                    test_glob_0,
+                                                    type_split='pre')
 
         return train_glob_0, test_glob_0
 
@@ -296,6 +315,14 @@ class Learningset:
         # Get AUC Features
         train_glob_0, test_glob_0 = \
             get_auc_features(train_glob_0, test_glob_0, fillna_auc)
+
+        # Pct on AUC Features
+        # All AUC features in dict
+        dict_auc_features = get_auc_dict_features(train_glob_0)
+        train_glob_0 = calcul_pct_on_pre_post(train_glob_0,
+                                              dict_auc_features)
+        test_glob_0 = calcul_pct_on_pre_post(test_glob_0,
+                                             dict_auc_features)
 
         if full_df:
             return train_glob_0, test_glob_0

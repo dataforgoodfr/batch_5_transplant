@@ -32,8 +32,11 @@ SPLITTER_INIT_FEATURE = {
 # Other dynamic's features with no initial in static's data
 SPLITTER_DYNA_FEATURE_LIST = ['ETCO2',
                               # 'PAPS',
-                              'Temp', 'B.I.S', 'BIS SR',
+                              'Temp',
+                              'B.I.S', 'BIS SR',
                               'SpO2_by_FiO2',
+                              'PASs_minus_PASd',
+                              'PAPsys_minus_PAPdia',
                               # 'PNIs'
                               # 'SpO2'
                               ]
