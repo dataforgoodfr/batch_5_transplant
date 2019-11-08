@@ -31,7 +31,7 @@ matplotlib==3.0.0
 mistune==0.8.3
 nbconvert==5.3.1
 nbformat==4.4.0
-notebook==5.4.0
+notebook==5.7.8
 numpy==1.15.2
 olefile==0.46
 pamela==0.3.0
