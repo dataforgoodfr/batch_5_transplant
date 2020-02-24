@@ -3,7 +3,7 @@ argh==0.26.2
 asn1crypto==0.24.0
 async-generator==1.10
 beautifulsoup4==4.6.3
-bleach==2.0.0
+bleach==3.1.1
 certifi==2018.10.15
 cffi==1.11.4
 cryptography==2.1.4
