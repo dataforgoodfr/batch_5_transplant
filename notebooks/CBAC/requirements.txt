@@ -25,7 +25,7 @@ jupyterhub==0.9.4
 jupyterlab==0.31.8
 jupyterlab-launcher==0.10.5
 kiwisolver==1.0.1
-Mako==1.0.7
+Mako==1.2.2
 MarkupSafe==1.0
 matplotlib==3.0.0
 mistune==0.8.3
